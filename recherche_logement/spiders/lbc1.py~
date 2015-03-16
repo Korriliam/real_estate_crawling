@@ -1,0 +1,13 @@
+# -*- coding: utf-8 -*-
+import scrapy
+
+
+class Lbc1Spider(scrapy.Spider):
+    name = "lbc1"
+    allowed_domains = ["http://www.leboncoin.fr/locations/offres/ile_de_france/paris/?f=a"]
+    start_urls = (
+        'http://www.http://www.leboncoin.fr/locations/offres/ile_de_france/paris/?f=a/',
+    )
+
+    def parse(self, response):
+        pass
