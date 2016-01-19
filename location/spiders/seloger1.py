@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from urlparse import urlparse
 import scrapy
 from scrapy.http.request import Request
-from recherche_logement.location.models import Annonces
+from location.models import Annonces
 import urlparse
 from datetime import datetime
 import traceback
