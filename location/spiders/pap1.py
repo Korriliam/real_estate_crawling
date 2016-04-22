@@ -3,30 +3,30 @@ from __future__ import unicode_literals
 # -*- coding: utf-8 -*-
 import scrapy
 from scrapy.http.request import Request
-from recherche_logement.location.models import Annonces
+from location.models import Annonces
 import urlparse
 from datetime import datetime
 import traceback
 
-class Lbc1Spider(scrapy.Spider):
-    name = "lbc1"
+class pap1Spider(scrapy.Spider):
+    name = "pap1"
     start_urls = (
-        'http://www.leboncoin.fr/locations/offres/ile_de_france/paris/?f=a&th=1&mre={0}&sqs=1&ret=2'.format(800),
+        'http://www.pap.fr/annonce/locations-appartement-paris-75-g439-jusqu-a-{0}-euros-a-partir-de-20-m2'.format(800),
     )
 
 
     def parse(self, response):
-        results = response.xpath('//div[@class="list-lbc"]')
+        results = response.xpath('//ul[@class="search-results-list"]')
         for i,elmt in enumerate(results):
-            htmlId = elmt.xpath("//div[@class='content-color']/div[@class='list-lbc']/a[@title]/@href").extract()
-            htmlId = [oo.replace("http://www.leboncoin.fr/locations/","").replace(".htm?ca=12_s","") for oo in htmlId]
-            links = elmt.xpath("//div[@class='list-lbc']/a/@href").extract()
+            htmlId = elmt.xpath("//li[@class='annonce']/div[@class='header-annonce']/a/@name").extract()
+            # htmlId = [oo.replace("http://www.leboncoin.fr/locations/","").replace(".htm?ca=12_s","") for oo in htmlId]
+            links = elmt.xpath("//li[@class='annonce']/div[@class='header-annonce']/a/@href").extract()
             # descriptions = elmt.xpath('//div[@class="listing_infos"]/p/text()').extract()
-            titles = elmt.xpath('//div[@class="detail"]/div[@class="title"]/text()').extract()
-            prix = elmt.xpath('//div[@class="price"]/text()').extract()
-            prix = [oo.replace(" ","").replace("\n","") for oo in prix]
+            titles = elmt.xpath("//li[@class='annonce']/div[@class='header-annonce']/a/span[@class='desc']/text()").extract()
+            prix = elmt.xpath("//li[@class='annonce']/div[@class='header-annonce']/a/span[@class='prix']/text()").extract()
+            # prix = [oo.replace(" ","").replace("\n","") for oo in prix]
             lieux = elmt.xpath('//div[@class="placement"]/text()').extract()
-            lieux = [oo.replace('\n','').replace('  ','') for oo in lieux]
+            # lieux = [oo.replace('\n','').replace('  ','') for oo in lieux]
 
 
             break
@@ -44,7 +44,7 @@ class Lbc1Spider(scrapy.Spider):
             # object.phone = phone[i]
             # object.chargesComprises = (cc[i] in "CC")
             object.lieux = lieux[i]
-            object.url = links[i]
+            object.url = "http://www.pap.fr"+links[i]
             object.htmlId = htmlId[i]
             object.lastChange = datetime.now()
             object.save()
@@ -89,7 +89,7 @@ class Lbc1Spider(scrapy.Spider):
                 yield Request(links[i], callback=self.parse_one_annonce, meta={'object':object})
 
         except UnboundLocalError:
-            print "Crawling terminé. Exitting..."
+            print "Crawling ended. Exitting..."
             exit()
         parse = urlparse.urlparse(response.url)
         try:
