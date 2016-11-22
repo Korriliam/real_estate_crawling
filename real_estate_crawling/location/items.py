@@ -7,7 +7,7 @@
 
 from scrapy.contrib.djangoitem import DjangoItem
 from models import Annonces
-
+from scrapy_djangoitem import DjangoItem
 
 class RechercheLogementItem(DjangoItem):
     django_model = Annonces
