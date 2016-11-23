@@ -2,8 +2,15 @@ from __future__ import unicode_literals
 # -*- coding: utf8 -*-
 from django.conf import settings as d_settings
 import sys
-# sys.path.append("/home/korrigan/real_estate_crawling/real_estate_crawling/")
+sys.path.append("/home/korrigan/real_estate_crawling/real_estate_crawling/location")
+import os
 
+# os.environ["SECRET_KEY"] = "secret key value"
+# import django
+# django.setup()
+
+# from django.core.wsgi import get_wsgi_application
+# application = get_wsgi_application()
 
 # une option de scrapy, fait varier le temps entre deux requetes successives dans un temps compris entre 10 et 39.0
 AUTOTHROTTLE_ENABLED = True
@@ -14,7 +21,6 @@ AUTOTHROTTLE_DEBUG = True # pour activer l'affichage de statistiques supplément
 CONCURRENT_REQUESTS = 1 # nombre de requetes vers un site en même temps (128 au maximum) signifie que l'on recupere 1
                         # site à la fois.
 BOT_NAME = 'real_estate_crawling.location'
-import pdb; pdb.set_trace()  # XXX BREAKPOINT
 
 SPIDER_MODULES = ['real_estate_crawling.location.spiders']
 NEWSPIDER_MODULE = 'real_estate_crawling.location.spiders'
@@ -54,7 +60,8 @@ DATABASE_SCHEMA = 'location'
 
 
 INSTALLED_APPS=(
-    'real_estate_crawling',
+    'real_estate_crawling.location',
+    'location',
 )
 # To configure Django en général, et en particuleir la connexion à la base de données.
 DATABASES={
@@ -62,7 +69,7 @@ DATABASES={
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': DATABASE_SCHEMA,
         'USER': 'location',
-        'PASSWORD': 'atinlor21',
+        'PASSWORD': 'location',
         'HOST': 'localhost',
         }
 }
