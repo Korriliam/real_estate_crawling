@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 # -*- coding: utf8 -*-
 from django.conf import settings as d_settings
 import sys
-sys.path.append("/home/korrigan/real_estate_crawling/real_estate_crawling/location")
+#sys.path.append("/home/korrigan/real_estate_crawling/real_estate_crawling/location")
 import os
 
 # os.environ["SECRET_KEY"] = "secret key value"
@@ -30,10 +30,10 @@ NEWSPIDER_MODULE = 'real_estate_crawling.location.spiders'
 
 # les classes qui vont traiter les requetes et reponse avant/apres téléchargement
 # unepriorité est attribuée à chaque downloader middleware
-# DOWNLOADER_MIDDLEWARES = {
-#         'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
-#         #activation de rotateUserAgents ici. Va attributer user agent different à chaque requête.
-# }
+DOWNLOADER_MIDDLEWARES = {
+        'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
+        #activation de rotateUserAgents ici. Va attributer user agent different à chaque requête.
+}
 
 #Nombre de redirection successives que l'on peut effectuer.
 REDIRECT_MAX_TIMES = 3
@@ -43,7 +43,7 @@ DOWNLOAD_TIMEOUT = 180
 EXTENSIONS = {
     'scrapy.contrib.corestats.CoreStats': 500,
     'scrapy.contrib.logstats.LogStats': 500,
-    'util.statsToDb.statsToDb': 800,
+    #'util.statsToDb.statsToDb': 800,
     'scrapy.contrib.throttle.AutoThrottle': 900,
     # 'util.EndMiddleware.VacuumJobdir':900
 }

@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 __author__ = 'Guillaume Le Bihan'
 
-from location.models import Statistics
+from location.models import Statistic
 from scrapy.xlib.pydispatch import dispatcher
 from scrapy import signals
 from django.core.exceptions import MultipleObjectsReturned
@@ -35,7 +35,7 @@ class statsToDb(object):
         """
         this function is called whenever the spider is done with its work
         """
-        item = Statistics()
+        item = Statistic()
         # on recupere certaines statistiques qui sont contenues dans un tableau nommé spider_stats.
         item.startTime  = unicode(self.utc2local(spider_stats['start_time']).replace(microsecond=0))
         item.finishTime = unicode(self.utc2local(spider_stats['finish_time']).replace(microsecond=0))
