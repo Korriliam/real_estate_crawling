@@ -27,7 +27,8 @@ class Statistic(models.Model):
     imgCount = models.BigIntegerField()
     nbScrapedItems = models.BigIntegerField()
 
-    # class Meta:
+    class Meta:
+        app_label = 'location'
         # db_table = "Statistic"
 
 class Offer(models.Model):

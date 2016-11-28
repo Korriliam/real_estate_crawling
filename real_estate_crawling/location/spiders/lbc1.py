@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 # -*- coding: utf-8 -*-
 import scrapy
 from scrapy.http.request import Request
-from location.models import Annonces
+from location.models import Offer
 import urlparse
 from datetime import datetime
 import traceback

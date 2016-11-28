@@ -6,9 +6,14 @@
 # http://doc.scrapy.org/en/latest/topics/items.html
 
 from scrapy.contrib.djangoitem import DjangoItem
-from models import Annonces
+from models import Offer, Statistic, UserAgent
 from scrapy_djangoitem import DjangoItem
 
-class RechercheLogementItem(DjangoItem):
-    django_model = Annonces
+class OfferItem(DjangoItem):
+    django_model = Offer
 
+class StatisticItem(DjangoItem):
+    django_model = Statistic
+
+class UserAgentItem(DjangoItem):
+    django_model = UserAgent
