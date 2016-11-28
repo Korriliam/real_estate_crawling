@@ -9,8 +9,7 @@ import os
 # import django
 # django.setup()
 
-# from django.core.wsgi import get_wsgi_application
-# application = get_wsgi_application()
+SECRET_KEY = "secret key value"
 
 # une option de scrapy, fait varier le temps entre deux requetes successives dans un temps compris entre 10 et 39.0
 AUTOTHROTTLE_ENABLED = True
@@ -25,7 +24,6 @@ BOT_NAME = 'real_estate_crawling.location'
 SPIDER_MODULES = ['real_estate_crawling.location.spiders']
 NEWSPIDER_MODULE = 'real_estate_crawling.location.spiders'
 
-SECRET_KEY = "secret key value"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'location (+http://www.yourdomain.com)'
@@ -60,7 +58,7 @@ DATABASE_SCHEMA = 'location'
 
 
 INSTALLED_APPS=(
-    'real_estate_crawling.location',
+    # 'real_estate_crawling.location',
     'location',
 )
 # To configure Django en général, et en particuleir la connexion à la base de données.
@@ -73,3 +71,7 @@ DATABASES={
         'HOST': 'localhost',
         }
 }
+
+from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()
+

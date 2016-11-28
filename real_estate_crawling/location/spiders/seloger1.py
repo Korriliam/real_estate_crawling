@@ -15,6 +15,8 @@ class Seloger1Spider(scrapy.Spider):
     start_urls = [
         # 'http://www.seloger.com/recherche.htm?org=engine&idtt=1&nb_pieces=&pxmax={0}&idtypebien=2%2C1&ci=750113%2C750105#idtt=1&idtypebien=1&idtypebien=2&&pxmax=800&&surfacemin={1}&&ci=750105,750113&'.format(prix_max,surface_min)
         'http://www.seloger.com/recherche.htm?cp=75&org=advanced_search&idtt=1&refannonce=&pxmin=&pxmax={0}&surfacemin={1}&surfacemax=&idtypebien=1&surf_terrainmin=&surf_terrainmax=&etagemin=&etagemax=&idtypechauffage=&idtypecuisine='.format(prix_max,surface_min)
+
+
     ]
 
     def parse(self, response):
@@ -24,13 +26,13 @@ class Seloger1Spider(scrapy.Spider):
             links = elmt.xpath("//div/h2/a/@href").extract()
             descriptions = elmt.xpath('//div[@class="listing_infos"]/p/text()').extract()
             titles = elmt.xpath('//div[@class="listing_infos"]/h2/a/text()').extract()
-            prix = elmt.xpath('//div[@class="price "]/a/text()').extract()
+            prix = elmt.xpath('//div[@class="amount"]/a/text()').extract()
             lieux = elmt.xpath('//div[@class="listing_infos"]/h2/a/span/text()').extract()
             # date = elmt.xpath('//div[@class="date"]/text()').extract()
-            agence = elmt.xpath('//div[@class="agency_contact"]/p[@class="agency_name"]/span/text()').extract()
-            phone = elmt.xpath('//div[@class="agency_contact"]/div/@data-phone').extract()
+            # agence = elmt.xpath('//div[@class="agency_contact"]/p[@class="agency_name"]/span/text()').extract()
+            # phone = elmt.xpath('//div[@class="agency_contact"]/div/@data-phone').extract()
             page_suiv = elmt.xpath('//div[@class="page_number"]/a[position()=1]/@href').extract()[0]
-            cc = elmt.xpath('//div[@class="price "]/a/sup/text()').extract()
+            cc = elmt.xpath('//div[@class="amount"]/a/sup/text()').extract()
             break
 
         for i in range(len(prix)):
@@ -40,7 +42,7 @@ class Seloger1Spider(scrapy.Spider):
             else:
                 object = ann[0]
             object.prix = prix[i][:-2]
-            object.agence = agence[i]
+            # object.agence = agence[i]
             object.description = descriptions[i]
             object.title = titles[i]
             object.phone = phone[i]
@@ -65,13 +67,13 @@ class Seloger1Spider(scrapy.Spider):
             links = elmt.xpath("//div/h2/a/@href").extract()
             descriptions = elmt.xpath('//div[@class="listing_infos"]/p/text()').extract()
             titles = elmt.xpath('//div[@class="listing_infos"]/h2/a/text()').extract()
-            prix = elmt.xpath('//div[@class="price "]/a/text()').extract()
+            prix = elmt.xpath('//div[@class="amount"]/a/text()').extract()
             lieux = elmt.xpath('//div[@class="listing_infos"]/h2/a/span/text()').extract()
             # date = elmt.xpath('//div[@class="date"]/text()').extract()
-            agence = elmt.xpath('//div[@class="agency_contact"]/p[@class="agency_name"]/span/text()').extract()
-            phone = elmt.xpath('//div[@class="agency_contact"]/div/@data-phone').extract()
+            # agence = elmt.xpath('//div[@class="agency_contact"]/p[@class="agency_name"]/span/text()').extract()
+            # phone = elmt.xpath('//div[@class="agency_contact"]/div/@data-phone').extract()
             page_suiv = elmt.xpath('//div[@class="page_number"]/a[position()=1]/@href').extract()[0]
-            cc = elmt.xpath('//div[@class="price "]/a/sup/text()').extract()
+            cc = elmt.xpath('//div[@class="amount"]/a/sup/text()').extract()
             break
 
         try:

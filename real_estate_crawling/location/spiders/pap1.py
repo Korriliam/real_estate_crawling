@@ -16,7 +16,7 @@ class pap1Spider(scrapy.Spider):
 
 
     def parse(self, response):
-        results = response.xpath('//ul[@class="search-results-list"]')
+        results = response.xpath('//div[@class="search-results-list"]')
         for i,elmt in enumerate(results):
             htmlId = elmt.xpath("//li[@class='annonce']/div[@class='header-annonce']/a/@name").extract()
             # htmlId = [oo.replace("http://www.leboncoin.fr/locations/","").replace(".htm?ca=12_s","") for oo in htmlId]
@@ -30,7 +30,7 @@ class pap1Spider(scrapy.Spider):
 
 
             break
-        page_suiv = elmt.xpath('//ul[@id="paging"]/li/a/@href').extract()[0]
+        # page_suiv = elmt.xpath('//ul/li[@class="next"]/a/@href').extract()[0]
         for i in range(len(prix)):
             ann = Annonces.objects.filter(htmlId=htmlId[i]).distinct()
             if Annonces.objects.filter(htmlId=htmlId[i]).count() == 0:

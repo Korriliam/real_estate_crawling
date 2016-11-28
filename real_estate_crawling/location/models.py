@@ -5,7 +5,7 @@ from django.db import models
 
 
 
-class Statistics(models.Model):
+class Statistic(models.Model):
     '''
     Contains the stats attached to each crawling operation/session (nb of results, ...)
     '''
@@ -27,10 +27,10 @@ class Statistics(models.Model):
     imgCount = models.BigIntegerField()
     nbScrapedItems = models.BigIntegerField()
 
-    class Meta:
-        db_table = "Statistics"
+    # class Meta:
+        # db_table = "Statistic"
 
-class Annonces(models.Model):
+class Offer(models.Model):
     '''
 
     '''
@@ -45,5 +45,14 @@ class Annonces(models.Model):
     phone = models.CharField(max_length=100,null=True,blank=True)
     htmlId = models.CharField(max_length=100,null=True,blank=True)
     lastChange = models.DateTimeField(null=True, blank=True)
-    class Meta:
-        db_table = "Annonces"
+    # class Meta:
+        # db_table = "Offer"
+
+class UserAgent(models.Model):
+    '''
+    Contains a list of user agents
+    '''
+    user_agent_string = models.CharField(max_length=500)
+
+    # class Meta:
+        # db_table = "UserAgent"
