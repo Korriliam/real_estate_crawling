@@ -15,25 +15,25 @@ class Lbc1Spider(scrapy.Spider):
 
 
     def parse(self, response):
-        results = response.xpath('//div[@class="list-lbc"]')
-        for i,elmt in enumerate(results):
-            htmlId = elmt.xpath("//div[@class='content-color']/div[@class='list-lbc']/a[@title]/@href").extract()
-            htmlId = [oo.replace("http://www.leboncoin.fr/locations/","").replace(".htm?ca=12_s","") for oo in htmlId]
-            links = elmt.xpath("//div[@class='list-lbc']/a/@href").extract()
-            # descriptions = elmt.xpath('//div[@class="listing_infos"]/p/text()').extract()
-            titles = elmt.xpath('//div[@class="detail"]/div[@class="title"]/text()').extract()
-            prix = elmt.xpath('//div[@class="price"]/text()').extract()
-            prix = [oo.replace(" ","").replace("\n","") for oo in prix]
-            lieux = elmt.xpath('//div[@class="placement"]/text()').extract()
-            lieux = [oo.replace('\n','').replace('  ','') for oo in lieux]
+        results = response.xpath('//li[@itemtype="http://schema.org/Offer"]')
+        # htmlId = elmt.xpath("//div[@class='content-color']/div[@class='list-lbc']/a[@title]/@href").extract()
+        # htmlId = [oo.replace("http://www.leboncoin.fr/locations/","").replace(".htm?ca=12_s","") for oo in htmlId]
+        links = response.xpath('//section[@class="item_infos"]/h2[@itemprop="name"]/text()').extract()
+        descriptions = response.xpath('//div[@class="listing_infos"]/p/text()').extract()
+        titles = response.xpath('//section[@class="item_infos"]/h3/text()').extract()
+        prix = response.xpath('//div[@class="price"]/text()').extract()
+        prix = [oo.replace(" ","").replace("\n","") for oo in prix]
+        lieux = response.xpath('//p[@itemtype="http://schema.org/Place"]').extract()
+        lieux = [oo.replace('\n','').replace('  ','') for oo in lieux]
+        print lieux
+        print titles
+        print links
+        print prix
 
-
-            break
-        page_suiv = elmt.xpath('//ul[@id="paging"]/li/a/@href').extract()[0]
-        for i in range(len(prix)):
-            ann = Annonces.objects.filter(htmlId=htmlId[i]).distinct()
-            if Annonces.objects.filter(htmlId=htmlId[i]).count() == 0:
-                object = Annonces()
+        for i in range(len(results)):
+            ann = Offer.objects.filter(htmlId=htmlId[i]).distinct()
+            if Offer.objects.filter(htmlId=htmlId[i]).count() == 0:
+                object = Offer()
             else:
                 object = ann[0]
             object.prix = prix[i][:-1]
@@ -44,7 +44,7 @@ class Lbc1Spider(scrapy.Spider):
             # object.chargesComprises = (cc[i] in "CC")
             object.lieux = lieux[i]
             object.url = links[i]
-            object.htmlId = htmlId[i]
+            # object.htmlId = htmlId[i]
             object.lastChange = datetime.now()
             object.save()
             yield Request(links[i], callback=self.parse_one_annonce, meta={'object':object})
@@ -55,23 +55,22 @@ class Lbc1Spider(scrapy.Spider):
 
 
     def parse_following_page(self,response):
-        results = response.xpath('//div[@class="list-lbc"]')
-        for i,elmt in enumerate(results):
-            htmlId = elmt.xpath("//div[@class='content-color']/div[@class='list-lbc']/a[@title]/@href").extract()
-            htmlId = [oo.replace("http://www.leboncoin.fr/locations/","").replace(".htm?ca=12_s","") for oo in htmlId]
-            links = elmt.xpath("//div[@class='list-lbc']/a/@href").extract()
-            # descriptions = elmt.xpath('//div[@class="listing_infos"]/p/text()').extract()
-            titles = elmt.xpath('//div[@class="detail"]/div[@class="title"]/text()').extract()
-            prix = elmt.xpath('//div[@class="price"]/text()').extract()
-            prix = [oo.replace(" ","").replace("\n","") for oo in prix]
-            lieux = elmt.xpath('//div[@class="placement"]/text()').extract()
-            lieux = [oo.replace('\n','').replace('  ','') for oo in lieux]
-            break
+        results = response.xpath('//li[@itemtype="http://schema.org/Offer"]')
+        # htmlId = elmt.xpath("//div[@class='content-color']/div[@class='list-lbc']/a[@title]/@href").extract()
+        # htmlId = [oo.replace("http://www.leboncoin.fr/locations/","").replace(".htm?ca=12_s","") for oo in htmlId]
+        links = elmt.xpath('//section[@class="item_infos"]/h3/@title').extract()
+        descriptions = elmt.xpath('//div[@class="listing_infos"]/p/text()').extract()
+        # titles = elmt.xpath('//section[@class="item_infos"]/h3/text()').extract()
+        prix = elmt.xpath('//div[@class="price"]/text()').extract()
+        prix = [oo.replace(" ","").replace("\n","") for oo in prix]
+        lieux = elmt.xpath('//p[@itemtype="http://schema.org/Place"]').extract()
+        lieux = [oo.replace('\n','').replace('  ','') for oo in lieux]
+
         try:
             for i in range(len(prix)):
-                ann = Annonces.objects.filter(htmlId=htmlId[i]).distinct()
-                if Annonces.objects.filter(htmlId=htmlId[i]).count() == 0:
-                    object = Annonces()
+                ann = Offer.objects.filter(htmlId=htmlId[i]).distinct()
+                if Offer.objects.filter(htmlId=htmlId[i]).count() == 0:
+                    object = Offer()
                 else:
                     object = ann[0]
                 object.prix = prix[i][:-1]
@@ -82,7 +81,7 @@ class Lbc1Spider(scrapy.Spider):
                 # object.chargesComprises = (cc[i] in "CC")
                 object.lieux = lieux[i]
                 object.url = links[i]
-                object.htmlId = htmlId[i]
+                # object.htmlId = htmlId[i]
                 object.lastChange = datetime.now()
                 object.save()
                 yield Request(links[i], callback=self.parse_one_annonce, meta={'object':object})
@@ -107,8 +106,8 @@ class Lbc1Spider(scrapy.Spider):
 
 
     def parse_one_annonce(self, response):
-        surface = response.xpath('//th[text()="Surface : "]/following::td[1]/text()').extract()
-        descriptionDetaillee = response.xpath('///div[@class="AdviewContent"]/div[@class="content"]/text()').extract()
+        surface = response.xpath('//span[text()="Surface"]/following::text()').extract()
+        descriptionDetaillee = response.xpath('//div/p[@itemprop="description"]/text()').extract()
         # phone = response.xpath("//div[@class='lbc_links']/span[@class='lbcPhone']/span[@id='phoneNumber']/a/@href").extract()[53:-1]
         print(surface)
         print(descriptionDetaillee)
