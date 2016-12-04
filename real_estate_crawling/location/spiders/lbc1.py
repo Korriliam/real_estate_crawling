@@ -13,106 +13,61 @@ class Lbc1Spider(scrapy.Spider):
         'http://www.leboncoin.fr/locations/offres/ile_de_france/paris/?f=a&th=1&mre={0}&sqs=1&ret=2'.format(800),
     )
 
-
     def parse(self, response):
-        results = response.xpath('//li[@itemtype="http://schema.org/Offer"]')
-        # htmlId = elmt.xpath("//div[@class='content-color']/div[@class='list-lbc']/a[@title]/@href").extract()
-        # htmlId = [oo.replace("http://www.leboncoin.fr/locations/","").replace(".htm?ca=12_s","") for oo in htmlId]
-        links = response.xpath('//section[@class="item_infos"]/h2[@itemprop="name"]/text()').extract()
-        descriptions = response.xpath('//div[@class="listing_infos"]/p/text()').extract()
-        titles = response.xpath('//section[@class="item_infos"]/h3/text()').extract()
-        prix = response.xpath('//div[@class="price"]/text()').extract()
-        prix = [oo.replace(" ","").replace("\n","") for oo in prix]
-        lieux = response.xpath('//p[@itemtype="http://schema.org/Place"]').extract()
-        lieux = [oo.replace('\n','').replace('  ','') for oo in lieux]
-        print lieux
-        print titles
-        print links
-        print prix
+        yield Request(response.url, self.parse_next_page, dont_filter=True)
 
-        for i in range(len(results)):
-            ann = Offer.objects.filter(htmlId=htmlId[i]).distinct()
-            if Offer.objects.filter(htmlId=htmlId[i]).count() == 0:
-                object = Offer()
-            else:
-                object = ann[0]
-            object.prix = prix[i][:-1]
-            # object.agence = agence[i]
-            # object.description = descriptions[i]
-            object.title = titles[i]
-            # object.phone = phone[i]
-            # object.chargesComprises = (cc[i] in "CC")
-            object.lieux = lieux[i]
-            object.url = links[i]
-            # object.htmlId = htmlId[i]
-            object.lastChange = datetime.now()
-            object.save()
-            yield Request(links[i], callback=self.parse_one_annonce, meta={'object':object})
-
-        yield Request(response.url+"&o=2",
-                              callback=self.parse_following_page)
-
-
-
-    def parse_following_page(self,response):
-        results = response.xpath('//li[@itemtype="http://schema.org/Offer"]')
-        # htmlId = elmt.xpath("//div[@class='content-color']/div[@class='list-lbc']/a[@title]/@href").extract()
-        # htmlId = [oo.replace("http://www.leboncoin.fr/locations/","").replace(".htm?ca=12_s","") for oo in htmlId]
-        links = elmt.xpath('//section[@class="item_infos"]/h3/@title').extract()
-        descriptions = elmt.xpath('//div[@class="listing_infos"]/p/text()').extract()
-        # titles = elmt.xpath('//section[@class="item_infos"]/h3/text()').extract()
-        prix = elmt.xpath('//div[@class="price"]/text()').extract()
-        prix = [oo.replace(" ","").replace("\n","") for oo in prix]
-        lieux = elmt.xpath('//p[@itemtype="http://schema.org/Place"]').extract()
-        lieux = [oo.replace('\n','').replace('  ','') for oo in lieux]
-
+    def parse_next_page(self, response):
         try:
-            for i in range(len(prix)):
-                ann = Offer.objects.filter(htmlId=htmlId[i]).distinct()
-                if Offer.objects.filter(htmlId=htmlId[i]).count() == 0:
-                    object = Offer()
+            for elmt in response.xpath('.//li[@itemtype="http://schema.org/Offer"]'):
+                html_id = elmt.xpath('.//div[@class="saveAd"]/@data-savead-id').extract()[0]
+                check_offer = Offer.objects.filter(html_id=html_id).distinct()
+                if Offer.objects.filter(html_id=html_id).count() == 0:
+                    offer = Offer()
                 else:
-                    object = ann[0]
-                object.prix = prix[i][:-1]
-                # object.agence = agence[i]
-                # object.description = descriptions[i]
-                object.title = titles[i]
-                # object.phone = phone[i]
-                # object.chargesComprises = (cc[i] in "CC")
-                object.lieux = lieux[i]
-                object.url = links[i]
-                # object.htmlId = htmlId[i]
-                object.lastChange = datetime.now()
-                object.save()
-                yield Request(links[i], callback=self.parse_one_annonce, meta={'object':object})
+                    offer = check_offer[0]
 
+                offer.html_id = html_id
+                offer.url = elmt.xpath('.//a/@href').extract()[0]
+                offer.title = elmt.xpath('.//section[@class="item_infos"]/h3/text()').extract()[0].strip()
+                try:
+                    offer.price = elmt.xpath('.//div[@class="price"]/text()').extract()[0].strip()
+                except:
+                    offer.price = None
+                offer.address = elmt.xpath('.//p[@itemtype="http://schema.org/Place"]/text()').extract()[0].strip()
+                offer.last_change = datetime.now()
+                offer.save()
+                yield Request('http:' + offer.url, callback=self.parse_one_annonce, meta={'object':offer})
         except UnboundLocalError:
-            print "Crawling terminé. Exitting..."
+            print "Crawling done. Exiting..."
             exit()
         parse = urlparse.urlparse(response.url)
+        t = True
         try:
             n = urlparse.parse_qs(parse.query)['o'][0]
         except KeyError:
-            print traceback.format_exc()
-            print parse
-            print response.url
-            exit()
+            t = False
+            next_page = response.url + '?o=2'
+            yield Request(next_page,
+                                callback=self.parse)
 
-        parsed = int(n)
-        page_suiv = response.url[:-len(n)] + str(parsed + 1)
+        if t:
+            parsed = int(n)
+            next_page = response.url[:-len(n)] + str(parsed + 1)
 
-        yield Request(page_suiv,
-                              callback=self.parse_following_page)
+            yield Request(next_page,
+                                callback=self.parse)
 
 
     def parse_one_annonce(self, response):
-        surface = response.xpath('//span[text()="Surface"]/following::text()').extract()
+        try:
+            surface = response.xpath('//span[text()="Surface"]/following::text()').extract()
+        except:
+            pass
         descriptionDetaillee = response.xpath('//div/p[@itemprop="description"]/text()').extract()
-        # phone = response.xpath("//div[@class='lbc_links']/span[@class='lbcPhone']/span[@id='phoneNumber']/a/@href").extract()[53:-1]
-        print(surface)
-        print(descriptionDetaillee)
-        # print(phone)
-        obj = response.meta['object']
-        obj.surface = surface[0]
-        obj.description = descriptionDetaillee[0]
-        obj.save()
+        offer = response.meta['object']
+        try:
+            offer.area = surface[0]
+        except:
+            pass
+        offer.description = descriptionDetaillee[0]
+        offer.save()

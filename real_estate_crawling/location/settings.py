@@ -1,15 +1,14 @@
 from __future__ import unicode_literals
 # -*- coding: utf8 -*-
-from django.conf import settings as d_settings
-import sys
 #sys.path.append("/home/korrigan/real_estate_crawling/real_estate_crawling/location")
-import os
 
 # os.environ["SECRET_KEY"] = "secret key value"
 # import django
 # django.setup()
 
 SECRET_KEY = "secret key value"
+
+ALLOWED_HOSTS = ['localhost','127.0.0.1']
 
 # une option de scrapy, fait varier le temps entre deux requetes successives dans un temps compris entre 10 et 39.0
 AUTOTHROTTLE_ENABLED = True
@@ -35,6 +34,8 @@ DOWNLOADER_MIDDLEWARES = {
         #activation de rotateUserAgents ici. Va attributer user agent different à chaque requête.
 }
 
+DEBUG = True
+
 #Nombre de redirection successives que l'on peut effectuer.
 REDIRECT_MAX_TIMES = 3
 
@@ -43,7 +44,7 @@ DOWNLOAD_TIMEOUT = 180
 EXTENSIONS = {
     'scrapy.contrib.corestats.CoreStats': 500,
     'scrapy.contrib.logstats.LogStats': 500,
-    #'util.statsToDb.statsToDb': 800,
+    'util.statsToDb.statsToDb': 800,
     'scrapy.contrib.throttle.AutoThrottle': 900,
     # 'util.EndMiddleware.VacuumJobdir':900
 }
@@ -53,14 +54,43 @@ RETRY_ENABLED = False # Booléen qui dit si oui on non, si je n'arrive pas à ac
 
 ROBOTSTXT_OBEY = False # Our bot don't follow robots.txt recommandations. On ne suis pas les recommandations des robots.Txt.
 
+ROOT_URLCONF = 'location.urls'
 
 DATABASE_SCHEMA = 'location'
+
+STATIC_URL = '/static/'
 
 
 INSTALLED_APPS=(
     # 'real_estate_crawling.location',
     'location',
+    'django.contrib.admin',
+    'django.contrib.messages',
+    'django.contrib.sessions',
+    'django.contrib.contenttypes',
+    'django.contrib.auth',
+    'django.contrib.staticfiles',
 )
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages'
+            ]
+        }
+    },
+]
+
+MIDDLEWARE = [
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+]
+
 # To configure Django en général, et en particuleir la connexion à la base de données.
 DATABASES={
     'default': {

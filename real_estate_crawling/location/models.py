@@ -35,25 +35,20 @@ class Offer(models.Model):
     '''
 
     '''
-    prix = models.BigIntegerField(null=True,blank=True)
+    price = models.BigIntegerField(null=True,blank=True)
     url = models.URLField()
     title = models.CharField(max_length=120,null=True,blank=True)
-    surface = models.CharField(max_length=120,null=True,blank=True)
+    area = models.CharField(max_length=120,null=True,blank=True)
     description = models.CharField(max_length=1000,null=True,blank=True)
-    agence = models.CharField(max_length=100,null=True,blank=True)
-    chargesComprises = models.NullBooleanField(null=True,blank=True)
-    lieux = models.CharField(max_length=200,null=True,blank=True)
+    agency = models.CharField(max_length=100,null=True,blank=True)
+    tax_included = models.NullBooleanField(null=True,blank=True)
+    address = models.CharField(max_length=200,null=True,blank=True)
     phone = models.CharField(max_length=100,null=True,blank=True)
-    htmlId = models.CharField(max_length=100,null=True,blank=True)
-    lastChange = models.DateTimeField(null=True, blank=True)
-    # class Meta:
-        # db_table = "Offer"
+    html_id = models.CharField(max_length=100,null=True,blank=True)
+    last_change = models.DateTimeField(null=True, blank=True)
 
 class UserAgent(models.Model):
     '''
     Contains a list of user agents
     '''
     user_agent_string = models.CharField(max_length=500)
-
-    # class Meta:
-        # db_table = "UserAgent"
