@@ -42,20 +42,21 @@ class Lbc1Spider(scrapy.Spider):
             exit()
         parse = urlparse.urlparse(response.url)
         t = True
+
         try:
             n = urlparse.parse_qs(parse.query)['o'][0]
         except KeyError:
             t = False
-            next_page = response.url + '?o=2'
+            next_page = response.url + '&o=2'
             yield Request(next_page,
-                                callback=self.parse)
+                                callback=self.parse_next_page)
 
         if t:
             parsed = int(n)
             next_page = response.url[:-len(n)] + str(parsed + 1)
 
             yield Request(next_page,
-                                callback=self.parse)
+                                callback=self.parse_next_page)
 
 
     def parse_one_annonce(self, response):
