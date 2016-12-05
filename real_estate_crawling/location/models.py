@@ -27,13 +27,9 @@ class Statistic(models.Model):
     imgCount = models.BigIntegerField()
     nbScrapedItems = models.BigIntegerField()
 
-    class Meta:
-        app_label = 'location'
-        # db_table = "Statistic"
-
 class Offer(models.Model):
     '''
-
+    Offers
     '''
     price = models.BigIntegerField(null=True,blank=True)
     url = models.URLField()
@@ -52,3 +48,17 @@ class UserAgent(models.Model):
     Contains a list of user agents
     '''
     user_agent_string = models.CharField(max_length=500)
+
+class Source(models.Model):
+    '''
+    Website mostly
+    '''
+    url = models.URLField()
+    name = models.CharField(max_length=120, null=True, blank=True)
+
+class OfferType(models.Model):
+    '''
+    Location, colocation...
+    '''
+    type = models.CharField(max_length=120)
+
