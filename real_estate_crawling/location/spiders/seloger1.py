@@ -6,20 +6,15 @@ from datetime import datetime
 import urlparse
 import scrapy
 import traceback
+from location.spiders.offer_spider import offerSpider
 
-class Seloger1Spider(scrapy.Spider):
+class Seloger1Spider(offerSpider):
     name = "seloger1"
     surface_min = 20
     prix_max = 800
     start_urls = [
         'http://www.seloger.com/list.htm?cp=75&idtt=1&idtypebien=1&pxmin=&pxmax={0}&surfacemin={1}&surfacemax=&LISTING-LISTpg=1'.format(prix_max,surface_min)
     ]
-
-    def __init__(self, *args, **kwargs):
-        pass
-
-    def parse(self, response):
-        yield Request(response.url, self.parse_next_page, dont_filter=True)
 
     def parse_next_page(self,response):
         try:

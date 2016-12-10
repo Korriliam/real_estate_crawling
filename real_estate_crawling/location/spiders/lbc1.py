@@ -1,20 +1,17 @@
 from __future__ import unicode_literals
 # -*- coding: utf-8 -*-
-import scrapy
 from scrapy.http.request import Request
 from location.models import Offer
 import urlparse
 from datetime import datetime
 import traceback
+from location.spiders.offer_spider import offerSpider
 
-class Lbc1Spider(scrapy.Spider):
+class Lbc1Spider(offerSpider):
     name = "lbc1"
     start_urls = (
-        'http://www.leboncoin.fr/locations/offres/ile_de_france/paris/?f=a&th=1&mre={0}&sqs=1&ret=2'.format(800),
+        'http://www.leboncoin.fr/locations/offres/ile_de_france/paris/?f=a&th=1&mre={0}&sqs=1&ret=2'.format(self.max_price),
     )
-
-    def parse(self, response):
-        yield Request(response.url, self.parse_next_page, dont_filter=True)
 
     def parse_next_page(self, response):
         try:
