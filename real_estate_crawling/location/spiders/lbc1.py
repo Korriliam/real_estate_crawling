@@ -1,17 +1,20 @@
 from __future__ import unicode_literals
 # -*- coding: utf-8 -*-
 from scrapy.http.request import Request
-from location.models import Offer
+from location.models import Offer, Source, OfferCategory
 import urlparse
 from datetime import datetime
-import traceback
 from location.spiders.offer_spider import offerSpider
 
 class Lbc1Spider(offerSpider):
     name = "lbc1"
+    max_price = 800
     start_urls = (
-        'http://www.leboncoin.fr/locations/offres/ile_de_france/paris/?f=a&th=1&mre={0}&sqs=1&ret=2'.format(self.max_price),
+        'http://www.leboncoin.fr/locations/offres/ile_de_france/paris/?f=a&th=1&mre={0}&sqs=1&ret=2'.format(max_price),
     )
+
+    offer_category_id = OfferCategory.objects.filter(name='location')[0].id
+    source_id = Source.objects.filter(name='leboncoin')[0].id
 
     def parse_next_page(self, response):
         try:
@@ -24,6 +27,8 @@ class Lbc1Spider(offerSpider):
                     offer = check_offer[0]
 
                 offer.html_id = html_id
+                offer.source_id = self.source_id
+                offer.offer_category_id = self.offer_category_id
                 offer.url = elmt.xpath('.//a/@href').extract()[0]
                 offer.title = elmt.xpath('.//section[@class="item_infos"]/h3/text()').extract()[0].strip()
                 try:

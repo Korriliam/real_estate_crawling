@@ -1,16 +1,18 @@
 from __future__ import unicode_literals
 # -*- coding: utf-8 -*-
 from scrapy.http.request import Request
-from location.models import Offer
+from location.models import Offer, Source, OfferCategory
 import scrapy
 import re
 
 class pap1Spider(scrapy.Spider):
     name = "pap1"
+    max_price = 800
     start_urls = (
-        'http://www.pap.fr/annonce/locations-appartement-paris-75-g439-jusqu-a-{0}-euros-a-partir-de-20-m2'.format(self.max_price),
+        'http://www.pap.fr/annonce/locations-appartement-paris-75-g439-jusqu-a-{0}-euros-a-partir-de-20-m2'.format(max_price),
     )
-
+    offer_category_id = OfferCategory.objects.filter(name='location')[0].id
+    source_id = Source.objects.filter(name='pap')[0].id
 
     def parse_next_page(self,response):
         try:
@@ -22,6 +24,8 @@ class pap1Spider(scrapy.Spider):
                 else:
                     offer = offer[0]
 
+                offer.offer_category_id = self.offer_category_id
+                offer.source_id = self.source_id
                 offer.url = 'http://www.pap.fr' + elmt.xpath(".//div[@class='float-right']/a/@href").extract()[0]
                 offer.title = elmt.xpath('.//span[@class="h1"]/text()').extract()[0]
                 offer.price = elmt.xpath('.//span[@class="price"]/strong/text()').extract()[0][:-2]
@@ -42,10 +46,7 @@ class pap1Spider(scrapy.Spider):
 
 
     def parse_one_annonce(self, response):
-        surface = response.xpath('//*[contains(text(),"Surface")]/strong/text()').extract()[0][:-3]
-        descriptionDetaillee = response.xpath('//p[@class="item-description"]/text()').extract()[0]
-
         obj = response.meta['object']
-        obj.surface = surface
-        obj.description = descriptionDetaillee
+        obj.surface = response.xpath('//p[@class="item-description"]/text()').extract()[0]
+        obj.description = response.xpath('//*[contains(text(),"Surface")]/strong/text()').extract()[0][:-3]
         obj.save()

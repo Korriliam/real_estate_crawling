@@ -1,11 +1,9 @@
 from __future__ import unicode_literals
 # -*- coding: utf-8 -*-
 from scrapy.http.request import Request
-from location.models import Offer
+from location.models import Offer, Source, OfferCategory
 from datetime import datetime
 import urlparse
-import scrapy
-import traceback
 from location.spiders.offer_spider import offerSpider
 
 class Seloger1Spider(offerSpider):
@@ -15,6 +13,9 @@ class Seloger1Spider(offerSpider):
     start_urls = [
         'http://www.seloger.com/list.htm?cp=75&idtt=1&idtypebien=1&pxmin=&pxmax={0}&surfacemin={1}&surfacemax=&LISTING-LISTpg=1'.format(prix_max,surface_min)
     ]
+
+    offer_category_id = OfferCategory.objects.filter(name='location')[0].id
+    source_id = Source.objects.filter(name='seloger')[0].id
 
     def parse_next_page(self,response):
         try:
@@ -27,6 +28,8 @@ class Seloger1Spider(offerSpider):
                 else:
                     offer = offer[0]
                 offer.html_id = html_id
+                offer.source_id = self.source_id
+                offer.offer_category_id =self. offer_category_id
                 offer.url = elmt.xpath(".//div/h2/a/@href").extract()[0]
                 offer.price = elmt.xpath('.//a[@class="amount"]/text()').extract()[0][:-3]
                 offer.address = elmt.xpath('.//div[@class="listing_infos"]/h2/a/span/text()').extract()[0]
