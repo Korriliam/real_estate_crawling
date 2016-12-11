@@ -1,10 +1,5 @@
 from __future__ import unicode_literals
 # -*- coding: utf8 -*-
-#sys.path.append("/home/korrigan/real_estate_crawling/real_estate_crawling/location")
-
-# os.environ["SECRET_KEY"] = "secret key value"
-# import django
-# django.setup()
 
 SECRET_KEY = "secret key value"
 
@@ -28,15 +23,9 @@ BOT_NAME = 'real_estate_crawling.location'
 SPIDER_MODULES = ['real_estate_crawling.location.spiders']
 NEWSPIDER_MODULE = 'real_estate_crawling.location.spiders'
 
-
-# Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'location (+http://www.yourdomain.com)'
-
-# les classes qui vont traiter les requetes et reponse avant/apres téléchargement
-# unepriorité est attribuée à chaque downloader middleware
 DOWNLOADER_MIDDLEWARES = {
-        'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
-        #activation de rotateUserAgents ici. Va attributer user agent different à chaque requête.
+        # 'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
+        'util.user_agent_rotator.RotateUserAgent': 1,
 }
 
 DEBUG = True
