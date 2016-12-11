@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 # -*- coding: utf8 -*-
 
-from location.models import OfferType, UserAgent, Source
+from location.models import OfferCategory, UserAgent, Source
 
 class Command(BaseCommand):
 
@@ -9,13 +9,17 @@ class Command(BaseCommand):
     help = 'Commands whose purpose is to fill the database'
 
     def _create_offer_types(self):
-        type1 = OfferType()
+        type1 = OfferCategory()
         type1.name = 'location'
         type1.save()
 
-        type2 = OfferType()
+        type2 = OfferCategory()
         type2.name = 'colocation'
         type2.save()
+
+        type3 = OfferCategory()
+        type3.name = 'achat'
+        type3.save()
 
     def _create_user_agents(self):
         user_agent_list = [ \
@@ -54,7 +58,7 @@ class Command(BaseCommand):
             "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24", \
             "Opera / 7.50(Windows XP;"
         ]
-        for elemt in user_agent_list:
+        for elmt in user_agent_list:
             ua = UserAgent()
             ua.user_agent_string = elmt
             ua.save()
@@ -77,7 +81,7 @@ class Command(BaseCommand):
 
 # url = eli.thegreenplace.net/2014/02/15/programmatically-populating-a-django-database/
 
-    def handle(self, *args, **options)
+    def handle(self, *args, **options):
         self._create_source()
         self._create_offer_types()
         self._create_user_agents()
