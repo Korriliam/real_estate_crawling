@@ -27,6 +27,32 @@ class Statistic(models.Model):
     imgCount = models.BigIntegerField()
     nbScrapedItems = models.BigIntegerField()
 
+class UserAgent(models.Model):
+    '''
+    Contains a list of user agents
+    '''
+    user_agent_string = models.CharField(max_length=500)
+
+class Source(models.Model):
+    '''
+    Website mostly
+    '''
+    url = models.URLField()
+    name = models.CharField(max_length=120, null=True, blank=True)
+
+class OfferCategory(models.Model):
+    '''
+    Location, colocation...
+    '''
+    name = models.CharField(max_length=120)
+
+class Place(models.Model):
+    country = models.CharField(max_length=120, null=True, blank=True)
+    street = models.CharField(max_length=1000, null=True, blank=True)
+    city = models.CharField(max_length=200, null=True, blank=True)
+    postal_code = models.CharField(max_length=120, null=True, blank=True)
+    state = models.CharField(max_length=120, null=True, blank=True)
+
 class Offer(models.Model):
     '''
     Offers
@@ -42,23 +68,6 @@ class Offer(models.Model):
     phone = models.CharField(max_length=100,null=True,blank=True)
     html_id = models.CharField(max_length=100,null=True,blank=True)
     last_change = models.DateTimeField(null=True, blank=True)
-
-class UserAgent(models.Model):
-    '''
-    Contains a list of user agents
-    '''
-    user_agent_string = models.CharField(max_length=500)
-
-class Source(models.Model):
-    '''
-    Website mostly
-    '''
-    url = models.URLField()
-    name = models.CharField(max_length=120, null=True, blank=True)
-
-class OfferType(models.Model):
-    '''
-    Location, colocation...
-    '''
-    type = models.CharField(max_length=120)
-
+    source = models.ForeignKey(Source, null=True, blank=True)
+    offer_category = models.ForeignKey(OfferCategory, null=True, blank=True)
+    place = models.ForeignKey(Place, null=True, blank=True)
