@@ -88,14 +88,13 @@ MIDDLEWARE = [
 # To configure Django en général, et en particuleir la connexion à la base de données.
 DATABASES={
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': DATABASE_SCHEMA,
-        'USER': 'location',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'korriliam$location',
+        'USER': 'korriliam',
         'PASSWORD': 'location',
-        'HOST': 'localhost',
-        }
+        'HOST': 'korriliam.mysql.pythonanywhere-services.com',
+    }
 }
-
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 
