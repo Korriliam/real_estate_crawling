@@ -4,12 +4,14 @@ from scrapy.http.request import Request
 from location.models import Offer, Source, OfferCategory
 import scrapy
 import re
+from location.spiders.offer_spider import offerSpider
 
-class pap1Spider(scrapy.Spider):
+class pap1Spider(offerSpider):
     name = "pap1"
     max_price = 800
     start_urls = (
-        'http://www.pap.fr/annonce/locations-appartement-paris-75-g439-jusqu-a-{0}-euros-a-partir-de-20-m2'.format(max_price),
+        # 'http://www.pap.fr/annonce/locations-appartement-paris-75-g439-jusqu-a-{0}-euros-a-partir-de-20-m2'.format(max_price),
+        'http://www.pap.fr/annonce/locations-appartement-paris-75-g439',
     )
     offer_category_id = OfferCategory.objects.filter(name='location')[0].id
     source_id = Source.objects.filter(name='pap')[0].id
@@ -28,7 +30,7 @@ class pap1Spider(scrapy.Spider):
                 offer.source_id = self.source_id
                 offer.url = 'http://www.pap.fr' + elmt.xpath(".//div[@class='float-right']/a/@href").extract()[0]
                 offer.title = elmt.xpath('.//span[@class="h1"]/text()').extract()[0]
-                offer.price = elmt.xpath('.//span[@class="price"]/strong/text()').extract()[0][:-2]
+                offer.price = elmt.xpath('.//span[@class="price"]/strong/text()').extract()[0][:-2].replace('.','').replace(' ','')
                 offer.address = elmt.xpath('.//p[@class="item-description"]/strong/text()').extract()[0]
                 yield Request(offer.url, callback=self.parse_one_annonce, meta={'object':offer})
 
@@ -47,6 +49,6 @@ class pap1Spider(scrapy.Spider):
 
     def parse_one_annonce(self, response):
         obj = response.meta['object']
-        obj.surface = response.xpath('//p[@class="item-description"]/text()').extract()[0]
-        obj.description = response.xpath('//*[contains(text(),"Surface")]/strong/text()').extract()[0][:-3]
+        obj.description= response.xpath('//p[@class="item-description"]/text()').extract()[0]
+        obj.surface = int(response.xpath('//*[contains(text(),"Surface")]/strong/text()').extract()[0][:-3])
         obj.save()

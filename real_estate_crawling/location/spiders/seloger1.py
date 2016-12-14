@@ -57,6 +57,6 @@ class Seloger1Spider(offerSpider):
         surface = response.xpath('//div[@class="criterions"]/ol/li[@class="resume__critere"]/text()').extract()
         descriptionDetaillee = response.xpath('//div[@id="detail"]/p[@class="description"]/text()').extract()
         offer = response.meta['offer']
-        offer.surface = surface[1]
+        offer.surface = surface[0]
         offer.description = descriptionDetaillee[0]
         offer.save()

@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 # -*- coding: utf-8 -*-
 from scrapy.http.request import Request
-import scrapy
+from scrapy.spiders import CrawlSpider
 
-class offerSpider(scrapy.Spider):
+class offerSpider(CrawlSpider):
     def __init__(self, max_price=None, min_price=None, max_area=None, min_area=None):
         self.max_price = max_price if max_price else ''
         self.min_price = min_price if min_price else ''

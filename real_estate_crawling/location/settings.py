@@ -15,6 +15,7 @@ AUTOTHROTTLE_DEBUG = True # pour activer l'affichage de statistiques supplément
 
 AUTOTHROTTLE_TARGET_CONCURRENCY = 2
 
+ALLOWED_HOSTS = ['korriliam.pythonanywhere.com',]
 
 CONCURRENT_REQUESTS_PER_DOMAIN = 2 # nombre de requetes vers un site en même temps (128 au maximum) signifie que l'on recupere 1
                         # site à la fois.
@@ -50,10 +51,10 @@ ROBOTSTXT_OBEY = False # Our bot don't follow robots.txt recommandations. On ne 
 
 ROOT_URLCONF = 'location.urls'
 
-DATABASE_SCHEMA = 'location'
 
-STATIC_URL = '/static/'
+#STATIC_URL = '/static/'
 
+RETRY_HTTP_CODES = [500, 502, 503, 504, 408]
 
 INSTALLED_APPS=(
     # 'real_estate_crawling.location',
@@ -95,6 +96,10 @@ DATABASES={
         'HOST': 'korriliam.mysql.pythonanywhere-services.com',
     }
 }
+
+STATIC_URL = '/static/'
+STATIC_ROOT = '/home/korriliam/real_estate_crawling/real_estate_crawling/static/'
+
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 
