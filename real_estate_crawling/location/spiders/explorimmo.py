@@ -60,15 +60,9 @@ class ExplorimmoSpider(offerSpider):
 
 
     def parse_one_annonce(self, response):
-        try:
-            surface = response.xpath('//li/span[@class="name"][text()="Surface"]/following::text()').extract()
-        except:
-            pass
+        surface = response.xpath('//li/span[@class="name"][text()="Surface"]/following-sibling::span/text()').extract()
         descriptionDetaillee = response.xpath('//div[@itemprop="description"]/p[@class="description"]/text()').extract()
         offer = response.meta['object']
-        try:
-            offer.area = surface[0]
-        except:
-            pass
+        offer.area = surface[0].strip()[:-3]
         offer.description = descriptionDetaillee[0]
         offer.save()
