@@ -10,7 +10,7 @@ class Lbc1Spider(offerSpider):
     name = "lbc1"
     max_price = 800
     start_urls = (
-        'http://www.leboncoin.fr/locations/offres/ile_de_france/paris/?f=a&th=1&mre={0}&sqs=1&ret=2'.format(max_price),
+        'http://www.leboncoin.fr/locations/offres/ile_de_france/paris/?f=a&th=1&mre=&sqs=1&ret=2',#.format(max_price),
     )
 
     offer_category_id = OfferCategory.objects.filter(name='location')[0].id

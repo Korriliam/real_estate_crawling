@@ -12,12 +12,12 @@ class LogicimmoSpider(offerSpider):
 
 
     offer_category_id = OfferCategory.objects.filter(name='location')[0].id
-    source_id = Source.objects.filter(name=name)[0].id
+    source_id = Source.objects.filter(name="logicimmo")[0].id
 
     def parse_next_page(self, response):
         try:
-            for elmt in response.xpath('.//div[@class="offer"]'):
-                html_id = elmt.xpath('.//div[@class="mea-async-block"]/div/div[@id]/@id').extract()[0]
+            for elmt in response.xpath('.//div[@itemscope=""][@itemtype="http://schema.org/ApartmentComplex"]'):
+                html_id = elmt.xpath('.//div[@id]/@id').extract()[0]
                 check_offer = Offer.objects.filter(html_id=html_id).distinct()
                 if Offer.objects.filter(html_id=html_id).count() == 0:
                     offer = Offer()
@@ -30,10 +30,16 @@ class LogicimmoSpider(offerSpider):
                 offer.url = elmt.xpath('.//a[@class="offer-link"]/@href').extract()[0]
                 # offer.title = elmt.xpath('.//section[@class="item_infos"]/h3/text()').extract()[0].strip()
                 try:
-                    offer.price = elmt.xpath('.//p[@class="offer-price"]/span/text()').extract()[0].strip()
+                    offer.price = elmt.xpath('.//p[@class="offer-price"]/span/text()').extract()[0].strip()[:-2].replace(' ', '')
                 except:
                     offer.price = None
-                offer.address = elmt.xpath('.//a[@class="offer-block offer-link"]/@title').extract()[0].strip()
+                offer.address = ""
+                arrdssmt = elmt.xpath('.//div[@class="offer-places-block"]/h2/span/text()').extract()
+                thorough_place = elmt.xpath('.//a[@class="offer-block offer-link"]/@title').extract()
+                if len(arrdssmt):
+                    offer.address += arrdssmt[0]
+                if len(thorough_place):
+                    offer.address += thorough_place[0]
                 offer.last_change = datetime.now()
                 offer.save()
                 yield Request(offer.url, callback=self.parse_one_annonce, meta={'object':offer})
@@ -67,8 +73,8 @@ class LogicimmoSpider(offerSpider):
 
     def parse_one_annonce(self, response):
         surface = response.xpath('//span[@class="offer-area-number"]/text()').extract()
-        descriptionDetaillee = response.xpath('//div[@class="offer-description-text"]/p/text()').extract()
+        descriptionDetaillee = response.xpath('//div[@class="offer-description-text"]').extract()
         offer = response.meta['object']
         offer.area = surface[0]
-        offer.description = descriptionDetaillee[0]
+        offer.description = descriptionDetaillee[0].strip()
         offer.save()

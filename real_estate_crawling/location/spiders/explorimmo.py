@@ -16,8 +16,8 @@ class ExplorimmoSpider(offerSpider):
 
     def parse_next_page(self, response):
         try:
-            for elmt in response.xpath('.//div[@class="vue"]'):
-                html_id = elmt.xpath('.//div[@data-classified-id]/@data-classified-id').extract()[0]
+            for elmt in response.xpath('.//div[@id="vue"]/div[@data-classified-id]'):
+                html_id = elmt.xpath('.//*/@data-classified-id').extract()[0]
                 check_offer = Offer.objects.filter(html_id=html_id).distinct()
                 if Offer.objects.filter(html_id=html_id).count() == 0:
                     offer = Offer()
@@ -30,10 +30,13 @@ class ExplorimmoSpider(offerSpider):
                 offer.url = 'http://www.explorimmo.com' + elmt.xpath('.//h2[@itemprop="name"]/a[@class="js-item-title"]/@href').extract()[0]
                 offer.title = elmt.xpath('.//h2[@itemprop="name"]/a[@class="js-item-title"]/text()').extract()[0].strip()
                 try:
-                    offer.price = elmt.xpath('.//span[@class="price-label"]/text()').extract()[0].strip()
+                    offer.price = elmt.xpath('.//span[@class="price-label"]/text()').extract()[0].strip().replace(u'\xa0','')[:-1]
                 except:
                     offer.price = None
-                offer.address = elmt.xpath('.//span[@class="item-localisation"]/text()').extract()[0].strip().replace('<span>', '').replace('</span>','')
+
+                arrdssmt = (' '.join(elmt.xpath('.//span[@class="localisation-label"]/strong/text()').extract())).strip()
+                metro = (' '.join(elmt.xpath('.//span[@class="item-localisation"]/text()').extract())).strip()
+                offer.address = arrdssmt + ' ' + metro
                 offer.last_change = datetime.now()
                 offer.save()
                 yield Request(offer.url, callback=self.parse_one_annonce, meta={'object':offer})

@@ -11,7 +11,7 @@ class Seloger1Spider(offerSpider):
     surface_min = 20
     prix_max = 800
     start_urls = [
-        'http://www.seloger.com/list.htm?cp=75&idtt=1&idtypebien=1&pxmin=&pxmax={0}&surfacemin={1}&surfacemax=&LISTING-LISTpg=1'.format(prix_max,surface_min)
+        'http://www.seloger.com/list.htm?cp=75&idtt=1&idtypebien=1&pxmin=&pxmax=&surfacemin=&surfacemax=&LISTING-LISTpg=1',#.format(prix_max,surface_min)
     ]
 
     offer_category_id = OfferCategory.objects.filter(name='location')[0].id
