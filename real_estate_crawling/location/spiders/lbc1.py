@@ -9,12 +9,19 @@ from location.spiders.offer_spider import offerSpider
 class Lbc1Spider(offerSpider):
     name = "lbc1"
     max_price = 800
-    start_urls = (
-        'http://www.leboncoin.fr/locations/offres/ile_de_france/paris/?f=a&th=1&mre=&sqs=1&ret=2',#.format(max_price),
-    )
+    start_urls = ()
 
-    offer_category_id = OfferCategory.objects.filter(name='location')[0].id
     source_id = Source.objects.filter(name='leboncoin')[0].id
+
+    map_category_to_url = {
+        'location': 'http://www.leboncoin.fr/locations/offres/ile_de_france/paris/?f=a&th=1&mre=&sqs=1&ret=2',
+        'colocation': 'https://www.leboncoin.fr/colocations/offres/ile_de_france/?th=1&location=Paris&parrot=0'
+    }
+
+    def __init__(self, category="location"):
+        super(self.__class__, self).__init__()
+        self.start_urls = (self.map_category_to_url[category],)
+        offer_category_id = OfferCategory.objects.filter(name=category)[0].id
 
     def parse_next_page(self, response):
         try:
