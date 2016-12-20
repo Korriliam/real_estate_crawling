@@ -69,7 +69,7 @@ def export_xls(modeladmin, request, queryset):
 export_xls.short_description = u"Export XLS"
 
 class OfferAdmin(admin.ModelAdmin):
-    list_display = ('title', 'price', 'description', 'url', 'area', 'address', 'source', 'last_change')
+    list_display = ('title', 'price', 'description', 'show_url', 'area', 'address', 'source', 'last_change')
     list_display_editable = ('area', )
     list_per_page = 30
     search_fields =('title', 'description', 'area', )
