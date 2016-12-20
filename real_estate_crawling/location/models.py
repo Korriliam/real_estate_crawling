@@ -40,11 +40,17 @@ class Source(models.Model):
     url = models.URLField()
     name = models.CharField(max_length=120, null=True, blank=True)
 
+    def __str__(self):
+        return self.name
+
 class OfferCategory(models.Model):
     '''
     Location, colocation...
     '''
     name = models.CharField(max_length=120)
+
+    def __str__(self):
+        return self.name
 
 class Place(models.Model):
     country = models.CharField(max_length=120, null=True, blank=True)
