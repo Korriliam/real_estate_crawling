@@ -5,7 +5,7 @@ SECRET_KEY = "secret key value"
 
 ALLOWED_HOSTS = ['localhost','127.0.0.1']
 
-DOWNLOAD_DELAY = 4.0
+DOWNLOAD_DELAY = 5.0
 
 # une option de scrapy, fait varier le temps entre deux requetes successives dans un temps compris entre 10 et 39.0
 AUTOTHROTTLE_ENABLED = True
@@ -17,7 +17,7 @@ AUTOTHROTTLE_TARGET_CONCURRENCY = 2
 
 ALLOWED_HOSTS = ['korriliam.pythonanywhere.com',]
 
-CONCURRENT_REQUESTS_PER_DOMAIN = 2 # nombre de requetes vers un site en même temps (128 au maximum) signifie que l'on recupere 1
+CONCURRENT_REQUESTS_PER_DOMAIN = 1 # nombre de requetes vers un site en même temps (128 au maximum) signifie que l'on recupere 1
                         # site à la fois.
 BOT_NAME = 'real_estate_crawling.location'
 
