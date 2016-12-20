@@ -23,7 +23,7 @@ class ExplorimmoSpider(offerSpider):
                     offer = Offer()
                 else:
                     offer = check_offer[0]
-
+                import pdb; pdb.set_trace()
                 offer.html_id = html_id
                 offer.source_id = self.source_id
                 offer.offer_category_id = self.offer_category_id
