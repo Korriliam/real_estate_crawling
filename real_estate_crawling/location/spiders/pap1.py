@@ -2,9 +2,9 @@ from __future__ import unicode_literals
 # -*- coding: utf-8 -*-
 from scrapy.http.request import Request
 from location.models import Offer, Source, OfferCategory
-import scrapy
 import re
 from location.spiders.offer_spider import offerSpider
+from datetime import datetime
 
 class pap1Spider(offerSpider):
     name = "pap1"
@@ -32,6 +32,7 @@ class pap1Spider(offerSpider):
                 offer.title = elmt.xpath('.//span[@class="h1"]/text()').extract()[0]
                 offer.price = elmt.xpath('.//span[@class="price"]/strong/text()').extract()[0][:-2].replace('.','').replace(' ','')
                 offer.address = elmt.xpath('.//p[@class="item-description"]/strong/text()').extract()[0]
+                offer.last_change = datetime.now()
                 yield Request(offer.url, callback=self.parse_one_annonce, meta={'object':offer})
 
         except UnboundLocalError:
@@ -50,5 +51,5 @@ class pap1Spider(offerSpider):
     def parse_one_annonce(self, response):
         obj = response.meta['object']
         obj.description= response.xpath('//p[@class="item-description"]/text()').extract()[0]
-        obj.surface = int(response.xpath('//*[contains(text(),"Surface")]/strong/text()').extract()[0][:-3])
+        obj.area = int(response.xpath('//*[contains(text(),"Surface")]/strong/text()').extract()[0][:-3])
         obj.save()

@@ -21,11 +21,14 @@ class Lbc1Spider(offerSpider):
     def __init__(self, category="location"):
         super(self.__class__, self).__init__()
         self.start_urls = (self.map_category_to_url[category],)
-        offer_category_id = OfferCategory.objects.filter(name=category)[0].id
+        self.offer_category_id = OfferCategory.objects.filter(name=category)[0].id
 
     def parse_next_page(self, response):
         try:
-            for elmt in response.xpath('.//li[@itemtype="http://schema.org/Offer"]'):
+            tags = response.xpath('.//li[@itemtype="http://schema.org/Offer"]')
+            if not len(tags):
+                exit()
+            for elmt in tags:
                 html_id = elmt.xpath('.//div[@class="saveAd"]/@data-savead-id').extract()[0]
                 check_offer = Offer.objects.filter(html_id=html_id).distinct()
                 if Offer.objects.filter(html_id=html_id).count() == 0:
@@ -36,8 +39,8 @@ class Lbc1Spider(offerSpider):
                 offer.html_id = html_id
                 offer.source_id = self.source_id
                 offer.offer_category_id = self.offer_category_id
-                offer.url = elmt.xpath('.//a/@href').extract()[0]
-                offer.title = elmt.xpath('.//section[@class="item_infos"]/h3/text()').extract()[0].strip()
+                offer.url = 'http:' + elmt.xpath('.//a/@href').extract()[0]
+                offer.title = elmt.xpath('.//section[@class="item_infos"]/h2/text()').extract()[0].strip()
                 try:
                     offer.price = elmt.xpath('.//div[@class="price"]/text()').extract()[0].strip()
                 except:
@@ -69,15 +72,9 @@ class Lbc1Spider(offerSpider):
 
 
     def parse_one_annonce(self, response):
-        try:
-            surface = response.xpath('//span[text()="Surface"]/following::text()').extract()
-        except:
-            pass
+        surface = response.xpath('//span[text()="Surface"]/following::span/text()').extract()
         descriptionDetaillee = response.xpath('//div/p[@itemprop="description"]/text()').extract()
         offer = response.meta['object']
-        try:
-            offer.area = surface[0]
-        except:
-            pass
+        offer.area = surface[0]
         offer.description = descriptionDetaillee[0]
         offer.save()
