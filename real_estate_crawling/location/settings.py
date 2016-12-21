@@ -5,15 +5,15 @@ SECRET_KEY = "secret key value"
 
 ALLOWED_HOSTS = ['localhost','127.0.0.1']
 
-DOWNLOAD_DELAY = 5.0
+DOWNLOAD_DELAY = 3.0
 
 # une option de scrapy, fait varier le temps entre deux requetes successives dans un temps compris entre 10 et 39.0
 AUTOTHROTTLE_ENABLED = True
-AUTOTHROTTLE_START_DELAY = 5.0
-AUTOTHROTTLE_MAX_DELAY = 39.0
+AUTOTHROTTLE_START_DELAY = 3.0
+AUTOTHROTTLE_MAX_DELAY = 19.5
 AUTOTHROTTLE_DEBUG = True # pour activer l'affichage de statistiques supplémentaires
 
-AUTOTHROTTLE_TARGET_CONCURRENCY = 2
+AUTOTHROTTLE_TARGET_CONCURRENCY = 1
 
 ALLOWED_HOSTS = ['korriliam.pythonanywhere.com',]
 
@@ -93,7 +93,7 @@ DATABASES={
         'NAME': 'korriliam$location',
         'USER': 'korriliam',
         'PASSWORD': 'location',
-        'HOST': 'localhost',
+        'HOST': 'korriliam.mysql.pythonanywhere-services.com',
     }
 }
 
