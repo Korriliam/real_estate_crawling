@@ -31,7 +31,7 @@ class Seloger1Spider(offerSpider):
                 offer.source_id = self.source_id
                 offer.offer_category_id =self. offer_category_id
                 offer.url = elmt.xpath(".//div/h2/a/@href").extract()[0]
-                offer.price = elmt.xpath('.//a[@class="amount"]/text()').extract()[0][:-3]
+                offer.price = elmt.xpath('.//a[@class="amount"]/text()').extract()[0][:-3].replace(u'\xa0','')
                 offer.address = elmt.xpath('.//div[@class="listing_infos"]/h2/a/span/text()').extract()[0]
                 # agence = elmt.xpath('//div[@class="agency_contact"]/p[@class="agency_name"]/span/text()').extract()
                 # phone = elmt.xpath('//div[@class="agency_contact"]/div/@data-phone').extract()
@@ -57,6 +57,6 @@ class Seloger1Spider(offerSpider):
         surface = response.xpath('//div[@class="criterions"]/ol/li[@class="resume__critere"]/text()').extract()
         descriptionDetaillee = response.xpath('//div[@id="detail"]/p[@class="description"]/text()').extract()
         offer = response.meta['offer']
-        offer.surface = surface[0]
+        offer.surface = surface[0].replace('m','').strip()
         offer.description = descriptionDetaillee[0]
         offer.save()

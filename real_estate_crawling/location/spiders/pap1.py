@@ -16,6 +16,11 @@ class pap1Spider(offerSpider):
     offer_category_id = OfferCategory.objects.filter(name='location')[0].id
     source_id = Source.objects.filter(name='pap')[0].id
 
+    def __init__(self, category="location"):
+        super(self.__class__, self).__init__()
+        self.offer_category_id = OfferCategory.objects.filter(name='location')[0].id
+
+
     def parse_next_page(self,response):
         try:
             for elmt in response.xpath('.//div[@class="box search-results-item"]'):

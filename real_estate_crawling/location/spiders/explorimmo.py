@@ -6,6 +6,9 @@ from location.models import Offer, Source, OfferCategory
 import urlparse
 from datetime import datetime
 from location.spiders.offer_spider import offerSpider
+import logging
+
+log = logging.getLogger(__name__)
 
 class ExplorimmoSpider(offerSpider):
     name = "explorimmo"
@@ -17,13 +20,17 @@ class ExplorimmoSpider(offerSpider):
     def parse_next_page(self, response):
         try:
             for elmt in response.xpath('.//div[@id="vue"]/div[@data-classified-id]'):
-                html_id = elmt.xpath('.//*/@data-classified-id').extract()[0]
+                try:
+                    html_id = elmt.xpath('.//*/@data-classified-id').extract()[0]
+                except:
+                    log.warning("No html_id for this element. Skipping it.")
+                    continue
+
                 check_offer = Offer.objects.filter(html_id=html_id).distinct()
                 if Offer.objects.filter(html_id=html_id).count() == 0:
                     offer = Offer()
                 else:
                     offer = check_offer[0]
-                import pdb; pdb.set_trace()
                 offer.html_id = html_id
                 offer.source_id = self.source_id
                 offer.offer_category_id = self.offer_category_id
@@ -67,5 +74,9 @@ class ExplorimmoSpider(offerSpider):
         descriptionDetaillee = response.xpath('//div[@itemprop="description"]/p[@class="description"]/text()').extract()
         offer = response.meta['object']
         offer.area = surface[0].strip()[:-3]
-        offer.description = descriptionDetaillee[0]
+        try:
+            offer.description = descriptionDetaillee[0]
+        except:
+            log.warning("No description for this item")
+            offer.description = ""
         offer.save()
