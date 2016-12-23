@@ -77,3 +77,5 @@ class Offer(models.Model):
     source = models.ForeignKey(Source, null=True, blank=True)
     offer_category = models.ForeignKey(OfferCategory, null=True, blank=True)
     place = models.ForeignKey(Place, null=True, blank=True)
+    active = models.BooleanField(default=True)
+
