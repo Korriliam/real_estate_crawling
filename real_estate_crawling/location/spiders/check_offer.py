@@ -20,6 +20,7 @@ class CheckOffer(CrawlSpider):
     def parse(self, response):
         if response.status == 404:
             log.info('Toggling offer to disabled')
-            obj = Offer.objects.filter(url=response.url)
+            log.info('url %s unfound' % response.request.meta['request_urls'])
+            obj = Offer.objects.filter(url=response.request.meta['request_urls'])[0]
             obj.active = False
             obj.save()
