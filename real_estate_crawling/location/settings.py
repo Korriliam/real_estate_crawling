@@ -31,7 +31,7 @@ DOWNLOADER_MIDDLEWARES = {
         'util.user_agent_rotator.RotateUserAgent': 1,
 }
 
-DEBUG = True
+DEBUG = False
 
 #Nombre de redirection successives que l'on peut effectuer.
 REDIRECT_MAX_TIMES = 3
@@ -45,7 +45,7 @@ EXTENSIONS = {
     # 'util.EndMiddleware.VacuumJobdir':900
 }
 
-HTTPCACHE_ENABLED = True
+HTTPCACHE_ENABLED = False
 
 RETRY_ENABLED = False # Booléen qui dit si oui on non, si je n'arrive pas à acceder à une page, je réeessaye (non ici)
                         # Si c'était vrai, on ressayerai à l'infini

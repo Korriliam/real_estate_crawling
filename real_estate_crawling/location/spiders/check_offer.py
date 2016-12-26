@@ -1,22 +1,25 @@
 from __future__ import unicode_literals
 # -*- coding: utf-8 -*-
-from scrapy.http.request import Request
-from location.models import Offer, Source, OfferCategory
-import urlparse
-from datetime import datetime
-from location.spiders.offer_spider import offerSpider
+from location.models import Offer
 from scrapy.spiders import CrawlSpider
+import logging
 
-class CheckOffer(offerSpider):
+log = logging.getLogger(__name__)
+
+class CheckOffer(CrawlSpider):
     name = "check_offer"
+    handle_httpstatus_list = [404]
 
-    source_id = Source.objects.filter(name='leboncoin')[0].id
-
-
-    def __init__(self, category="location"):
+    def __init__(self):
         super(self.__class__, self).__init__()
         urls = Offer.objects.values('url').filter(active=True)
 
         self.start_urls = set([url['url'] for url in urls])
         self.custom_settings = {'HTTPCACHE_ENABLED': False}
 
+    def parse(self, response):
+        if response.status == 404:
+            log.info('Toggling offer to disabled')
+            obj = Offer.objects.filter(url=response.url)
+            obj.active = False
+            obj.save()

@@ -6,6 +6,10 @@ import re
 from location.spiders.offer_spider import offerSpider
 from datetime import datetime
 
+import logging
+
+log = logging.getLogger(__name__)
+
 class pap1Spider(offerSpider):
     name = "pap1"
     max_price = 800
@@ -56,5 +60,8 @@ class pap1Spider(offerSpider):
     def parse_one_annonce(self, response):
         obj = response.meta['object']
         obj.description= response.xpath('//p[@class="item-description"]/text()').extract()[0]
-        obj.area = int(response.xpath('//*[contains(text(),"Surface")]/strong/text()').extract()[0][:-3])
+        try:
+            obj.area = int(response.xpath('//*[contains(text(),"Surface")]/strong/text()').extract()[0][:-3])
+        except:
+            log.warning('No surface ! Skipping')
         obj.save()
