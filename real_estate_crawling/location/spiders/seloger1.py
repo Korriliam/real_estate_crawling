@@ -5,6 +5,7 @@ from location.models import Offer, Source, OfferCategory
 from datetime import datetime
 import urlparse
 from location.spiders.offer_spider import offerSpider
+import re
 
 class Seloger1Spider(offerSpider):
     name = "seloger1"
@@ -54,9 +55,11 @@ class Seloger1Spider(offerSpider):
                             callback=self.parse_next_page)
 
     def parse_one_annonce(self, response):
-        surface = response.xpath('//div[@class="criterions"]/ol/li[@class="resume__critere"]/text()').extract()
+        tmp = ', '.join(response.xpath('//ol[@class="description-liste"]/text()').extract())
+        res = re.search('Surface de (\d+)',tmp)
         descriptionDetaillee = response.xpath('//div[@id="detail"]/p[@class="description"]/text()').extract()
         offer = response.meta['offer']
-        offer.surface = surface[0].replace('m','').strip()
+        if res:
+            offer.surface = res.group(1)
         offer.description = descriptionDetaillee[0]
         offer.save()

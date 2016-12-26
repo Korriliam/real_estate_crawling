@@ -96,7 +96,7 @@ DATABASES={
         'NAME': 'korriliam$location',
         'USER': 'korriliam',
         'PASSWORD': 'location',
-        'HOST': 'korriliam.mysql.pythonanywhere-services.com',
+        'HOST': 'localhost',
     }
 }
 
