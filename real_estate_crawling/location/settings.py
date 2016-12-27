@@ -96,7 +96,8 @@ DATABASES={
         'NAME': 'korriliam$location',
         'USER': 'korriliam',
         'PASSWORD': 'location',
-        'HOST': 'localhost',
+        'HOST': 'korriliam.mysql.pythonanywhere-services.com',
+        'CONN_MAX_AGE': 60,
     }
 }
 

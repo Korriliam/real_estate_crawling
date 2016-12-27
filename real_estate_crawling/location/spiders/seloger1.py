@@ -61,5 +61,8 @@ class Seloger1Spider(offerSpider):
         offer = response.meta['offer']
         if res:
             offer.surface = res.group(1)
-        offer.description = descriptionDetaillee[0]
+        try:
+            offer.description = descriptionDetaillee[0]
+        except: # maybe we've been redirect to "belledemeure.com"
+            offer.description = response.xpath('//p[@itemprop="description"]').extract()[0]
         offer.save()

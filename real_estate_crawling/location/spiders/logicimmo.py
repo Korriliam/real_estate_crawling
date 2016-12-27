@@ -75,6 +75,12 @@ class LogicimmoSpider(offerSpider):
         surface = response.xpath('//span[@class="offer-area-number"]/text()').extract()
         descriptionDetaillee = response.xpath('//div[@class="offer-description-text"]').extract()
         offer = response.meta['object']
-        offer.area = surface[0]
-        offer.description = descriptionDetaillee[0].strip()
+        try:
+            offer.area = surface[0]
+        except:
+            offer.area = None
+        try:
+            offer.description = descriptionDetaillee[0].strip()
+        except:
+            offer.description = "Not specified"
         offer.save()

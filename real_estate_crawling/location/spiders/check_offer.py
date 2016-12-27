@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 
 class CheckOffer(CrawlSpider):
     name = "check_offer"
-    handle_httpstatus_list = [404]
+    handle_httpstatus_list = [404, 500]
 
     def __init__(self):
         super(self.__class__, self).__init__()
@@ -18,9 +18,9 @@ class CheckOffer(CrawlSpider):
         self.custom_settings = {'HTTPCACHE_ENABLED': False}
 
     def parse(self, response):
-        if response.status == 404:
+        if response.status in (404, 500):
             log.info('Toggling offer to disabled')
-            log.info('url %s unfound' % response.request.meta['request_urls'])
-            obj = Offer.objects.filter(url=response.request.meta['request_urls'])[0]
+            log.info('url %s unfound' % response.request.meta)
+            obj = Offer.objects.filter(url=response.request.meta['redirect_urls'][0])[0]
             obj.active = False
             obj.save()
