@@ -10,8 +10,8 @@ import logging
 
 log = logging.getLogger(__name__)
 
-class pap1Spider(offerSpider):
-    name = "pap1"
+class papSpider(offerSpider):
+    name = "pap"
     max_price = 800
     start_urls = (
         # 'http://www.pap.fr/annonce/locations-appartement-paris-75-g439-jusqu-a-{0}-euros-a-partir-de-20-m2'.format(max_price),

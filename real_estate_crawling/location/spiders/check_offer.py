@@ -21,6 +21,7 @@ class CheckOffer(CrawlSpider):
         if response.status in (404, 500):
             log.info('Toggling offer to disabled')
             log.info('url %s unfound' % response.request.meta)
-            obj = Offer.objects.filter(url=response.request.meta['redirect_urls'][0])[0]
+            obj = Offer.objects.filter(url=response.request.meta['redirect_urls'][0])[0] if 'redirect_urls' in response.request.meta else \
+                Offer.objects.filter(url=response.url)[0]
             obj.active = False
             obj.save()

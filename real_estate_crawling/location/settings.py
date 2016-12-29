@@ -47,7 +47,7 @@ EXTENSIONS = {
 
 HTTPCACHE_ENABLED = False
 
-RETRY_ENABLED = False # Booléen qui dit si oui on non, si je n'arrive pas à acceder à une page, je réeessaye (non ici)
+RETRY_ENABLED = True # Booléen qui dit si oui on non, si je n'arrive pas à acceder à une page, je réeessaye (non ici)
                         # Si c'était vrai, on ressayerai à l'infini
 
 ROBOTSTXT_OBEY = False# Our bot don't follow robots.txt recommandations. On ne suis pas les recommandations des robots.Txt.
@@ -97,7 +97,7 @@ DATABASES={
         'USER': 'korriliam',
         'PASSWORD': 'location',
         'HOST': 'korriliam.mysql.pythonanywhere-services.com',
-        'CONN_MAX_AGE': 60,
+        'CONN_MAX_AGE': 299,
     }
 }
 

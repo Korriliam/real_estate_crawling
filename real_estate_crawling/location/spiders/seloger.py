@@ -7,8 +7,8 @@ import urlparse
 from location.spiders.offer_spider import offerSpider
 import re
 
-class Seloger1Spider(offerSpider):
-    name = "seloger1"
+class selegerSpider(offerSpider):
+    name = "seloger"
     surface_min = 20
     prix_max = 800
     start_urls = [
@@ -55,7 +55,7 @@ class Seloger1Spider(offerSpider):
                             callback=self.parse_next_page)
 
     def parse_one_annonce(self, response):
-        tmp = ', '.join(response.xpath('//ol[@class="description-liste"]/text()').extract())
+        tmp = ', '.join(response.xpath('//ol[@class="description-liste"]').extract())
         res = re.search('Surface de (\d+)',tmp)
         descriptionDetaillee = response.xpath('//div[@id="detail"]/p[@class="description"]/text()').extract()
         offer = response.meta['offer']

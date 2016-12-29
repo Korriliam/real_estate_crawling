@@ -1,21 +1,22 @@
 from __future__ import unicode_literals
 # -*- coding: utf-8 -*-
-from scrapy.http.request import Request
-from location.models import Offer, Source, OfferCategory
+from scrapy.http.request import request
+from location.models import offer, source, offercategory
 import urlparse
 from datetime import datetime
-from location.spiders.offer_spider import offerSpider
+from location.spiders.offer_spider import offerspider
 
-class Lbc1Spider(offerSpider):
-    name = "lbc1"
+class leboncoinSpider(offerSpider):
+    name = "leboncoin"
     max_price = 800
     start_urls = ()
 
     source_id = Source.objects.filter(name='leboncoin')[0].id
 
     map_category_to_url = {
-        'location': 'http://www.leboncoin.fr/locations/offres/ile_de_france/paris/?f=a&th=1&mre=&sqs=1&ret=2',
-        'colocation': 'https://www.leboncoin.fr/colocations/offres/ile_de_france/?th=1&location=Paris&parrot=0'
+        'location': 'https://www.leboncoin.fr/locations/offres/ile_de_france/paris/?f=a&th=1&mre=&sqs=1&ret=2',
+        'colocation': 'https://www.leboncoin.fr/colocations/offres/ile_de_france/?th=1&location=Paris&parrot=0',
+        'telephone': 'https://www.leboncoin.fr/telephonie/offres/ile_de_france/?th=1&q=note%204&parrot=0&ps=8&pe=12'
     }
 
     def __init__(self, category="location"):
@@ -44,11 +45,14 @@ class Lbc1Spider(offerSpider):
                 try:
                     offer.price = elmt.xpath('.//div[@class="price"]/text()').extract()[0].strip()
                 except:
-                    offer.price = None
-                offer.address = elmt.xpath('.//p[@itemtype="http://schema.org/Place"]/text()').extract()[0].strip()
+                    offer.price = elmt.xpath('.//h3[@class="item_price"]/@content').extract()[0].strip()
+                try:
+                    offer.address = elmt.xpath('.//p[@itemtype="http://schema.org/Place"]/text()').extract()[0].strip()
+                except:
+                    pass
                 offer.last_change = datetime.now()
                 offer.save()
-                yield Request('http:' + offer.url, callback=self.parse_one_annonce, meta={'object':offer})
+                yield Request(offer.url, callback=self.parse_one_annonce, meta={'object':offer})
         except UnboundLocalError:
             print "Crawling done. Exiting..."
             exit()
@@ -73,8 +77,11 @@ class Lbc1Spider(offerSpider):
 
     def parse_one_annonce(self, response):
         surface = response.xpath('//span[text()="Surface"]/following::span/text()').extract()
-        descriptionDetaillee = response.xpath('//div/p[@itemprop="description"]/text()').extract()
+        descriptionDetaillee = response.xpath('//div/p[@itemprop="description"]').extract()
         offer = response.meta['object']
-        offer.area = surface[0]
+        try:
+            offer.area = surface[0]
+        except:
+            pass
         offer.description = descriptionDetaillee[0]
         offer.save()
