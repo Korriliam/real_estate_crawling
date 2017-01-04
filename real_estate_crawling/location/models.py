@@ -79,3 +79,17 @@ class Offer(models.Model):
     place = models.ForeignKey(Place, null=True, blank=True)
     active = models.BooleanField(default=True)
 
+class SourceCategory(models.Model):
+    """
+     First thought to carry the whole bunch of leboncoin categories.
+     Then I thought it could be interessant for other sources in the future
+     Include a category's name, its url, being linked to the right row win source
+     table.
+    """
+    name = models.CharField(max_length=120)
+    url = models.URLField()
+    source = models.ForeignKey(Source)
+
+    def __str__(self):
+        return self.name
+

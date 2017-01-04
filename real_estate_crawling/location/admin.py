@@ -103,5 +103,11 @@ class OfferAdmin(admin.ModelAdmin):
 class UserAgentAdmin(admin.ModelAdmin):
     list_display = ('user_agent_string',)
 
+
+class SourceCategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'url', 'source')
+
+
 admin.site.register(Offer, OfferAdmin)
 admin.site.register(UserAgent, UserAgentAdmin)
+admin.site.register(UserAgent, SourceCategoryAdmin)
