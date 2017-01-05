@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Offer, UserAgent
+from .models import Offer, UserAgent, SourceCategory
 from django.utils.html import format_html
 from django.contrib.admin import RelatedOnlyFieldListFilter, DateFieldListFilter
 from django.http import HttpResponse
@@ -110,4 +110,4 @@ class SourceCategoryAdmin(admin.ModelAdmin):
 
 admin.site.register(Offer, OfferAdmin)
 admin.site.register(UserAgent, UserAgentAdmin)
-admin.site.register(UserAgent, SourceCategoryAdmin)
+admin.site.register(SourceCategory, SourceCategoryAdmin)

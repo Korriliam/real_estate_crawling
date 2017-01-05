@@ -5,7 +5,10 @@
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/items.html
 
-from models import Offer, Statistic, UserAgent, OfferCategory, Source, Place
+from models import (
+    Offer, Statistic, UserAgent, OfferCategory, Source, Place,
+    SourceCategory
+)
 from scrapy_djangoitem import DjangoItem
 
 class OfferItem(DjangoItem):
@@ -25,3 +28,6 @@ class PlaceItem(DjangoItem):
 
 class SourceItem(DjangoItem):
     django_model = Source
+
+class SourceCategoryItem(DjangoItem):
+    django_model = SourceCategory
