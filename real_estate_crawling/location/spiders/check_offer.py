@@ -2,6 +2,8 @@ from __future__ import unicode_literals
 # -*- coding: utf-8 -*-
 from location.models import Offer
 from scrapy.spiders import CrawlSpider
+from util.database import check_connection
+from MySQLdb import OperationalError
 import logging
 
 log = logging.getLogger(__name__)
@@ -15,13 +17,23 @@ class CheckOffer(CrawlSpider):
         urls = Offer.objects.values('url').filter(active=True)
 
         self.start_urls = set([url['url'] for url in urls])
-        self.custom_settings = {'HTTPCACHE_ENABLED': False}
+        self.custom_settings = {
+            'HTTPCACHE_ENABLED': False,
+            'RETRY_ENABLED': False
+        }
+
 
     def parse(self, response):
         if response.status in (404, 500):
-            log.info('Toggling offer to disabled')
-            log.info('url %s unfound' % response.request.meta)
-            obj = Offer.objects.filter(url=response.request.meta['redirect_urls'][0])[0] if 'redirect_urls' in response.request.meta else \
-                Offer.objects.filter(url=response.url)[0]
-            obj.active = False
-            obj.save()
+            for _ in range(2):
+                try:
+                    log.info('Toggling offer to disabled')
+                    log.info('url %s unfound' % response.request.meta)
+                    obj = Offer.objects.filter(url=response.request.meta['redirect_urls'][0])[0] if 'redirect_urls' in response.request.meta else \
+                        Offer.objects.filter(url=response.url)[0]
+                    obj.active = False
+                    obj.save()
+                    break
+                except OperationalError as err:
+                    log.info("Checking connection")
+                    check_connection()
