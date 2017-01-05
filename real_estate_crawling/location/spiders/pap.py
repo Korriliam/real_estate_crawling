@@ -58,10 +58,10 @@ class papSpider(offerSpider):
 
 
     def parse_one_annonce(self, response):
-        obj = response.meta['object']
-        obj.description= response.xpath('//p[@class="item-description"]/text()').extract()[0]
+        offer = super(papSpider, self).parse_one_annonce(response)
+        offer.description= response.xpath('//p[@class="item-description"]/text()').extract()[0]
         try:
-            obj.area = int(response.xpath('//*[contains(text(),"Surface")]/strong/text()').extract()[0][:-3])
+            offer.area = int(response.xpath('//*[contains(text(),"Surface")]/strong/text()').extract()[0][:-3])
         except:
             log.warning('No surface ! Skipping')
-        obj.save()
+        offer.save()

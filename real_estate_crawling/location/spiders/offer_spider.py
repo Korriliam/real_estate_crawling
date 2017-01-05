@@ -17,4 +17,7 @@ class offerSpider(CrawlSpider):
         pass
 
     def parse_one_annonce(self, response):
-        pass
+        offer = response.meta['object']
+        if response.url != offer.url:
+            offer.url = response.url
+        return offer

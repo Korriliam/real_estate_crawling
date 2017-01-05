@@ -1,10 +1,10 @@
 from __future__ import unicode_literals
 # -*- coding: utf-8 -*-
-from scrapy.http.request import request
-from location.models import offer, source, offercategory
+from scrapy.http.request import Request
+from location.models import Offer, Source, OfferCategory
 import urlparse
 from datetime import datetime
-from location.spiders.offer_spider import offerspider
+from location.spiders.offer_spider import offerSpider
 
 class leboncoinSpider(offerSpider):
     name = "leboncoin"
@@ -76,6 +76,7 @@ class leboncoinSpider(offerSpider):
 
 
     def parse_one_annonce(self, response):
+        offer = super(leboncoinSpider, self).parse_one_annonce(response)
         surface = response.xpath('//span[text()="Surface"]/following::span/text()').extract()
         descriptionDetaillee = response.xpath('//div/p[@itemprop="description"]').extract()
         offer = response.meta['object']

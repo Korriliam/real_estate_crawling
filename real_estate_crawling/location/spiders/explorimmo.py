@@ -70,9 +70,10 @@ class ExplorimmoSpider(offerSpider):
 
 
     def parse_one_annonce(self, response):
+        offer = super(ExplorimmoSpider, self).parse_one_annonce(response)
         surface = response.xpath('//li/span[@class="name"][text()="Surface"]/following-sibling::span/text()').extract()
         descriptionDetaillee = response.xpath('//div[@itemprop="description"]/p[@class="description"]/text()').extract()
-        offer = response.meta['object']
+
         offer.area = surface[0].strip()[:-3]
         try:
             offer.description = descriptionDetaillee[0]

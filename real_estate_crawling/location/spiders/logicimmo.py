@@ -72,6 +72,7 @@ class LogicimmoSpider(offerSpider):
 
 
     def parse_one_annonce(self, response):
+        offer = super(LogicimmoSpider, self).parse_one_annonce(response)
         surface = response.xpath('//span[@class="offer-area-number"]/text()').extract()
         descriptionDetaillee = response.xpath('//div[@class="offer-description-text"]').extract()
         offer = response.meta['object']
