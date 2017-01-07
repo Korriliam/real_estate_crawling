@@ -24,16 +24,12 @@ class CheckOffer(CrawlSpider):
 
 
     def parse(self, response):
+        check_connection()
         if response.status in (404, 500):
-            for _ in range(2):
-                try:
-                    log.info('Toggling offer to disabled')
-                    log.info('url %s unfound' % response.request.meta)
-                    obj = Offer.objects.filter(url=response.request.meta['redirect_urls'][0])[0] if 'redirect_urls' in response.request.meta else \
-                        Offer.objects.filter(url=response.url)[0]
-                    obj.active = False
-                    obj.save()
-                    break
-                except OperationalError as err:
-                    log.info("Checking connection")
-                    check_connection()
+            log.info('Toggling offer to disabled')
+            log.info('url %s unfound' % response.request.meta)
+            obj = Offer.objects.filter(url=response.request.meta['redirect_urls'][0])[0] if 'redirect_urls' in response.request.meta else \
+                Offer.objects.filter(url=response.url)[0]
+            obj.active = False
+            obj.save()
+

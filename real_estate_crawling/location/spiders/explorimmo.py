@@ -3,10 +3,11 @@ from __future__ import unicode_literals
 # -*- coding: utf-8 -*-
 from scrapy.http.request import Request
 from location.models import Offer, Source, OfferCategory
-import urlparse
 from datetime import datetime
 from location.spiders.offer_spider import offerSpider
 import logging
+import re
+import urlparse
 
 log = logging.getLogger(__name__)
 
@@ -46,7 +47,7 @@ class ExplorimmoSpider(offerSpider):
                 offer.address = arrdssmt + ' ' + metro
                 offer.last_change = datetime.now()
                 offer.save()
-                yield Request(offer.url, callback=self.parse_one_annonce, meta={'object':offer})
+                yield Request(offer.url, callback=self.parse_one_annonce, meta={'offer':offer})
         except UnboundLocalError:
             print "Crawling done. Exiting..."
             exit()
@@ -73,8 +74,7 @@ class ExplorimmoSpider(offerSpider):
         offer = super(ExplorimmoSpider, self).parse_one_annonce(response)
         surface = response.xpath('//li/span[@class="name"][text()="Surface"]/following-sibling::span/text()').extract()
         descriptionDetaillee = response.xpath('//div[@itemprop="description"]/p[@class="description"]/text()').extract()
-
-        offer.area = surface[0].strip()[:-3]
+        offer.area = re.compile('(\D+)').sub('', surface[0])
         try:
             offer.description = descriptionDetaillee[0]
         except:

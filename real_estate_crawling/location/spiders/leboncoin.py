@@ -2,9 +2,10 @@ from __future__ import unicode_literals
 # -*- coding: utf-8 -*-
 from scrapy.http.request import Request
 from location.models import Offer, Source, OfferCategory
-import urlparse
 from datetime import datetime
 from location.spiders.offer_spider import offerSpider
+import urlparse
+import re
 
 class leboncoinSpider(offerSpider):
     name = "leboncoin"
@@ -45,14 +46,17 @@ class leboncoinSpider(offerSpider):
                 try:
                     offer.price = elmt.xpath('.//div[@class="price"]/text()').extract()[0].strip()
                 except:
-                    offer.price = elmt.xpath('.//h3[@class="item_price"]/@content').extract()[0].strip()
+                    try:
+                        offer.price = elmt.xpath('.//h3[@class="item_price"]/@content').extract()[0].strip()
+                    except:
+                        pass # there's definitely no price down here
                 try:
                     offer.address = elmt.xpath('.//p[@itemtype="http://schema.org/Place"]/text()').extract()[0].strip()
                 except:
                     pass
                 offer.last_change = datetime.now()
                 offer.save()
-                yield Request(offer.url, callback=self.parse_one_annonce, meta={'object':offer})
+                yield Request(offer.url, callback=self.parse_one_annonce, meta={'offer':offer})
         except UnboundLocalError:
             print "Crawling done. Exiting..."
             exit()
@@ -78,11 +82,10 @@ class leboncoinSpider(offerSpider):
     def parse_one_annonce(self, response):
         offer = super(leboncoinSpider, self).parse_one_annonce(response)
         surface = response.xpath('//span[text()="Surface"]/following::span/text()').extract()
-        descriptionDetaillee = response.xpath('//div/p[@itemprop="description"]').extract()
-        offer = response.meta['object']
+        description = response.xpath('//div/p[@itemprop="description"]').extract()
         try:
-            offer.area = surface[0]
+            offer.area = re.compile('(\D+)').sub('', surface[0])
         except:
             pass
-        offer.description = descriptionDetaillee[0]
+        offer.description = description[0]
         offer.save()

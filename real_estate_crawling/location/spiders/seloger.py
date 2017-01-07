@@ -59,9 +59,8 @@ class selogerSpider(offerSpider):
         tmp = ', '.join(response.xpath('//ol[@class="description-liste"]').extract())
         res = re.search('Surface de (\d+)',tmp)
         descriptionDetaillee = response.xpath('//div[@id="detail"]/p[@class="description"]/text()').extract()
-        offer = response.meta['offer']
         if res:
-            offer.surface = res.group(1)
+            offer.area = re.compile('(\D+)').sub('', res.group(1))
         try:
             offer.description = descriptionDetaillee[0]
         except: # maybe we've been redirect to "belledemeure.com"

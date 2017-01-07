@@ -4,7 +4,7 @@ from scrapy.http.request import Request
 from location.models import Offer, Source, OfferCategory
 from datetime import datetime
 from location.spiders.offer_spider import offerSpider
-
+import re
 
 class LogicimmoSpider(offerSpider):
     name = "logicimmo"
@@ -42,7 +42,7 @@ class LogicimmoSpider(offerSpider):
                     offer.address += thorough_place[0]
                 offer.last_change = datetime.now()
                 offer.save()
-                yield Request(offer.url, callback=self.parse_one_annonce, meta={'object':offer})
+                yield Request(offer.url, callback=self.parse_one_annonce, meta={'offer':offer})
         except UnboundLocalError:
             print "Crawling done. Exiting..."
             exit()
@@ -75,9 +75,8 @@ class LogicimmoSpider(offerSpider):
         offer = super(LogicimmoSpider, self).parse_one_annonce(response)
         surface = response.xpath('//span[@class="offer-area-number"]/text()').extract()
         descriptionDetaillee = response.xpath('//div[@class="offer-description-text"]').extract()
-        offer = response.meta['object']
         try:
-            offer.area = surface[0]
+            offer.area = re.compile('(\D+)').sub('', surface[0])
         except:
             offer.area = None
         try:

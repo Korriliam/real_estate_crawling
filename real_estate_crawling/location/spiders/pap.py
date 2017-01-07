@@ -42,7 +42,7 @@ class papSpider(offerSpider):
                 offer.price = elmt.xpath('.//span[@class="price"]/strong/text()').extract()[0][:-2].replace('.','').replace(' ','')
                 offer.address = elmt.xpath('.//p[@class="item-description"]/strong/text()').extract()[0]
                 offer.last_change = datetime.now()
-                yield Request(offer.url, callback=self.parse_one_annonce, meta={'object':offer})
+                yield Request(offer.url, callback=self.parse_one_annonce, meta={'offer':offer})
 
         except UnboundLocalError:
             print "Crawling ended. Exiting..."
@@ -59,9 +59,10 @@ class papSpider(offerSpider):
 
     def parse_one_annonce(self, response):
         offer = super(papSpider, self).parse_one_annonce(response)
-        offer.description= response.xpath('//p[@class="item-description"]/text()').extract()[0]
+        surface = response.xpath('//*[contains(text(),"Surface")]/strong/text()').extract()
+        offer.description = response.xpath('//p[@class="item-description"]/text()').extract()[0]
         try:
-            offer.area = int(response.xpath('//*[contains(text(),"Surface")]/strong/text()').extract()[0][:-3])
+            offer.area = re.compile('(\D+)').sub('', surface[0])
         except:
             log.warning('No surface ! Skipping')
         offer.save()
