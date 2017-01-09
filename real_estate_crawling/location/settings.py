@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 # -*- coding: utf8 -*-
 
-SECRET_KEY = "secret key value"
+SECRET_KEY = "fggùêfzeg*"
 
 ALLOWED_HOSTS = ['localhost','127.0.0.1']
 
@@ -36,7 +36,7 @@ DEBUG = False
 #Nombre de redirection successives que l'on peut effectuer.
 REDIRECT_MAX_TIMES = 3
 
-DOWNLOAD_TIMEOUT = 180
+DOWNLOAD_TIMEOUT = 40
 
 EXTENSIONS = {
     'scrapy.contrib.corestats.CoreStats': 500,
@@ -54,10 +54,7 @@ ROBOTSTXT_OBEY = False# Our bot don't follow robots.txt recommandations. On ne s
 
 ROOT_URLCONF = 'location.urls'
 
-
-#STATIC_URL = '/static/'
-
-RETRY_HTTP_CODES = [500, 502, 503, 504, 408]
+# RETRY_HTTP_CODES = [500, 502, 503, 504, 408]
 
 INSTALLED_APPS=(
     # 'real_estate_crawling.location',
