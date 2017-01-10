@@ -35,6 +35,7 @@ class leboncoinSpider(offerSpider):
                 check_offer = Offer.objects.filter(html_id=html_id).distinct()
                 if Offer.objects.filter(html_id=html_id).count() == 0:
                     offer = Offer()
+                    offer.first_crawl_date = datetime.now()
                 else:
                     offer = check_offer[0]
 
@@ -54,7 +55,7 @@ class leboncoinSpider(offerSpider):
                     offer.address = elmt.xpath('.//p[@itemtype="http://schema.org/Place"]/text()').extract()[0].strip()
                 except:
                     pass
-                offer.last_change = datetime.now()
+                offer.last_crawl_date = datetime.now()
                 offer.save()
                 yield Request(offer.url, callback=self.parse_one_annonce, meta={'offer':offer})
         except UnboundLocalError:

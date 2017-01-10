@@ -21,6 +21,7 @@ class LogicimmoSpider(offerSpider):
                 check_offer = Offer.objects.filter(html_id=html_id).distinct()
                 if Offer.objects.filter(html_id=html_id).count() == 0:
                     offer = Offer()
+                    offer.first_crawl_date = datetime.now()
                 else:
                     offer = check_offer[0]
 
@@ -40,7 +41,7 @@ class LogicimmoSpider(offerSpider):
                     offer.address += arrdssmt[0]
                 if len(thorough_place):
                     offer.address += thorough_place[0]
-                offer.last_change = datetime.now()
+                offer.last_crawl_date = datetime.now()
                 offer.save()
                 yield Request(offer.url, callback=self.parse_one_annonce, meta={'offer':offer})
         except UnboundLocalError:

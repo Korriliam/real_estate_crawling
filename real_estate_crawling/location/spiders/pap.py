@@ -32,6 +32,7 @@ class papSpider(offerSpider):
                 offer = Offer.objects.filter(html_id=html_id).distinct()
                 if Offer.objects.filter(html_id=html_id).count() == 0:
                     offer = Offer()
+                    offer.first_crawl_date = datetime.now()
                 else:
                     offer = offer[0]
 
@@ -41,7 +42,7 @@ class papSpider(offerSpider):
                 offer.title = elmt.xpath('.//span[@class="h1"]/text()').extract()[0]
                 offer.price = elmt.xpath('.//span[@class="price"]/strong/text()').extract()[0][:-2].replace('.','').replace(' ','')
                 offer.address = elmt.xpath('.//p[@class="item-description"]/strong/text()').extract()[0]
-                offer.last_change = datetime.now()
+                offer.last_crawl_date = datetime.now()
                 yield Request(offer.url, callback=self.parse_one_annonce, meta={'offer':offer})
 
         except UnboundLocalError:

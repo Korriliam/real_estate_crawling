@@ -26,6 +26,7 @@ class selogerSpider(offerSpider):
                 offer = Offer.objects.filter(html_id=html_id).distinct()
                 if not Offer.objects.filter(html_id=html_id).count():
                     offer = Offer()
+                    offer.last_crawl_date = datetime.now()
                 else:
                     offer = offer[0]
                 offer.html_id = html_id
@@ -37,7 +38,7 @@ class selogerSpider(offerSpider):
                 # agence = elmt.xpath('//div[@class="agency_contact"]/p[@class="agency_name"]/span/text()').extract()
                 # phone = elmt.xpath('//div[@class="agency_contact"]/div/@data-phone').extract()
                 offer.tax_included = 'CC' in elmt.xpath('.//a[@class="amount"]/sup/text()').extract()[0]
-                offer.last_change = datetime.now()
+                offer.last_crawl_date = datetime.now()
                 offer.save()
                 yield Request(offer.url,
                           callback=self.parse_one_annonce, meta={'offer':offer})
