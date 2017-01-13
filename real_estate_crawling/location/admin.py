@@ -4,7 +4,8 @@ from django.utils.html import format_html
 from django.contrib.admin import RelatedOnlyFieldListFilter, DateFieldListFilter
 from django.http import HttpResponse
 
-# Those two code excerpts come from http://djangotricks.blogspot.fr/2013/12/how-to-export-data-as-excel.html
+# Those two code excerpts come from
+# http://djangotricks.blogspot.fr/2013/12/how-to-export-data-as-excel.html
 # Thank you for sharing this guy
 
 
@@ -83,7 +84,8 @@ class OfferAdmin(admin.ModelAdmin):
         'area',
         'address',
         'source',
-        'last_change'
+        'first_crawl_date',
+        'last_crawl_date'
     )
     list_display_editable = ('area', )
     list_per_page = 30
@@ -91,7 +93,7 @@ class OfferAdmin(admin.ModelAdmin):
     list_filter = (
         ('source', RelatedOnlyFieldListFilter),
         ('offer_category', RelatedOnlyFieldListFilter),
-        ('last_change', DateFieldListFilter),
+        ('first_crawl_date', DateFieldListFilter),
     )
     actions = [export_xls, export_csv]
 

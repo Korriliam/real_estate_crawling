@@ -88,7 +88,7 @@ class SourceCategory(models.Model):
      table.
     """
     name = models.CharField(max_length=120)
-    url = models.URLField()
+    url = models.URLField(max_length=1000)
     source = models.ForeignKey(Source)
 
     def __str__(self):

@@ -88,5 +88,5 @@ class leboncoinSpider(offerSpider):
             offer.area = re.compile('(\D+)').sub('', surface[0])
         except:
             pass
-        offer.description = description[0]
+        offer.description = re.compile('<.*?>').sub('', description[0])
         offer.save()
