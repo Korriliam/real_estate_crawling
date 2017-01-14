@@ -29,10 +29,6 @@ class LogicimmoSpider(offerSpider):
                 offer.source_id = self.source_id
                 offer.offer_category_id = self.offer_category_id
                 offer.url = elmt.xpath('.//a[@class="offer-link"]/@href').extract()[0]
-                if 'detail-vente' in offer.url:
-                    # For dealing with the sale offers mistakenly included in
-                    # the location category
-                    continue
                 # offer.title = elmt.xpath('.//section[@class="item_infos"]/h3/text()').extract()[0].strip()
                 try:
                     offer.price = elmt.xpath('.//p[@class="offer-price"]/span/text()').extract()[0].strip()[:-2].replace(' ', '')

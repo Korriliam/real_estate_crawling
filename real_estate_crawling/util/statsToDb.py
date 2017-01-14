@@ -4,10 +4,11 @@ from __future__ import unicode_literals
 __author__ = 'Guillaume Le Bihan'
 
 from location.models import Statistic
-from real_estate_crawling.util import utc2local
 from scrapy.xlib.pydispatch import dispatcher
 from scrapy import signals
 from django.core.exceptions import MultipleObjectsReturned
+from datetime import datetime
+import time
 import scrapy
 
 class statsToDb(scrapy.statscollectors.MemoryStatsCollector):
@@ -22,6 +23,14 @@ class statsToDb(scrapy.statscollectors.MemoryStatsCollector):
         dispatcher.connect(self.stats_spider_closed, signal=signals.spider_closed)
         dispatcher.connect(self.stats_spider_closed, signal=signals.engine_stopped)
 
+
+    def utc2local(self, utc):
+        '''
+        Convert universal time to local time (gmt + 2 (Paris))
+        '''
+        epoch = time.mktime(utc.timetuple())
+        offset = datetime.fromtimestamp(epoch) - datetime.utcfromtimestamp(epoch)
+        return utc + offset
 
     def stats_spider_closed(self, spider):
         """
@@ -46,5 +55,10 @@ class statsToDb(scrapy.statscollectors.MemoryStatsCollector):
         item.dupeFiltered = self.spider_stats['request_depth_max'] if 'request_depth_max' in self.spider_stats else 0
         item.imgCount = self.spider_stats['images_count'] if 'images_count' in self.spider_stats else 0
         item.nbScrapedItems = self.spider_stats['item_scraped_count'] if 'item_scraped_count' in self.spider_stats else 0
+        # try:
+        #     item.Crawler = Crawler.objects.get(nameCrawler=spider.name)
+        # except MultipleObjectsReturned:
+        #     print "Warning. get() return more than one Crawler. Taking the first one."
+        #     item.Crawler = Crawler.objects.get(nameCrawler=spider.name)[0]
 
         item.save()
