@@ -87,18 +87,27 @@ MIDDLEWARE = [
 ]
 
 # To configure Django en général, et en particuleir la connexion à la base de données.
+# DATABASES={
+    # 'default': {
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'korriliam$location',
+        # 'USER': 'korriliam',
+        # 'PASSWORD': 'location',
+        # 'HOST': 'korriliam.mysql.pythonanywhere-services.com',
+        # 'CONN_MAX_AGE': 299,
+    # }
+# }
+
+
 DATABASES={
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'korriliam$location',
-        'USER': 'korriliam',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'location',
+        'USER': 'location',
         'PASSWORD': 'location',
-        'HOST': 'korriliam.mysql.pythonanywhere-services.com',
-        'CONN_MAX_AGE': 299,
-    }
+        'HOST': 'localhost',
+        }
 }
-
-
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/home/korriliam/real_estate_crawling/real_estate_crawling/static/'

@@ -30,7 +30,7 @@ class leboncoinSpider(offerSpider):
             tags = response.xpath('.//li[@itemtype="http://schema.org/Offer"]')
             if not len(tags):
                 exit()
-            for elmt in tags:
+            for elmt in tags[:3]:
                 html_id = elmt.xpath('.//div[@class="saveAd"]/@data-savead-id').extract()[0]
                 check_offer = Offer.objects.filter(html_id=html_id).distinct()
                 if Offer.objects.filter(html_id=html_id).count() == 0:
