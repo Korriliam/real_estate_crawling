@@ -90,6 +90,7 @@ class SourceCategory(models.Model):
     name = models.CharField(max_length=120)
     url = models.URLField(max_length=1000)
     source = models.ForeignKey(Source)
+    offer_category = models.ForeignKey(OfferCategory, null=True, blank=True)
 
     def __str__(self):
         return self.name

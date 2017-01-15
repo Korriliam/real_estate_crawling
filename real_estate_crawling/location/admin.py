@@ -107,7 +107,7 @@ class UserAgentAdmin(admin.ModelAdmin):
 
 
 class SourceCategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'url', 'source')
+    list_display = ('name', 'url', 'source', 'offer_category')
 
 
 admin.site.register(Offer, OfferAdmin)
