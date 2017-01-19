@@ -20,7 +20,8 @@ class CheckOffer(CrawlSpider):
         self.start_urls = set([url['url'] for url in urls])
         self.custom_settings = {
             'HTTPCACHE_ENABLED': False,
-            'RETRY_ENABLED': False
+            'RETRY_ENABLED': False,
+            'REDIRECT_ENABLED': False
         }
 
 
