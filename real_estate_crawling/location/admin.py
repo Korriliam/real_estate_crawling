@@ -85,7 +85,8 @@ class OfferAdmin(admin.ModelAdmin):
         'address',
         'source',
         'first_crawl_date',
-        'last_crawl_date'
+        'last_crawl_date',
+        'active'
     )
     list_display_editable = ('area', )
     list_per_page = 30
