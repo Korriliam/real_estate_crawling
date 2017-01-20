@@ -34,7 +34,7 @@ DOWNLOADER_MIDDLEWARES = {
 DEBUG = False
 
 #Nombre de redirection successives que l'on peut effectuer.
-REDIRECT_MAX_TIMES = 3
+REDIRECT_MAX_TIMES = 2
 
 DOWNLOAD_TIMEOUT = 40
 
