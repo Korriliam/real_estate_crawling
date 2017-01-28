@@ -30,18 +30,18 @@ class CheckOffer(CrawlSpider):
         check_connection()
         if response.status in (404, 500):
             self.toggle_disable(response)
-        elif response.status in (301):
+        elif response.status in (301,):
             if not re.match('.*-g439-\d{2}-r\d+$', response.url) and 'pap.fr' in response.url:
                 log.info('PAPTOGG')
                 self.toggle_disable(response)
             if not re.match('http://www.seloger.com/.*.htm?.*LISTING-LISTpg=\d+', response.url):
                 log.info('SELOGERTOGG')
                 self.toggle_disable(response)
-        elif response.status in (410):
+        elif response.status in (410,):
             if re.match('http://www.logic-immo.com/detail-location-.*.htm', response.url):
                 log.info('LOGICIMMOTOGG')
                 self.toggle_disable(response)
-        elif response.status in (200):
+        elif response.status in (200,):
             if 'explorimmo' in response.url:
                 if response.xpath('//div[@class="disabled-classified"]'):
                     log.info('EXPLORIMMOTOGG')
