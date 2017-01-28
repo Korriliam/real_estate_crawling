@@ -1,13 +1,16 @@
 from __future__ import unicode_literals
 # -*- coding: utf8 -*-
 
+
+HTTP_PROXY = 'http://127.0.0.1:8123'
+
 SECRET_KEY = "fggùêfzeg*"
 
 ALLOWED_HOSTS = ['localhost','127.0.0.1']
 
-DOWNLOAD_DELAY = 7.0
+DOWNLOAD_DELAY = 2.0
 
-RANDOMIZE_DOWNLOAD_DELAY = 2.5
+RANDOMIZE_DOWNLOAD_DELAY = 0.5
 
 # une option de scrapy, fait varier le temps entre deux requetes successives dans un temps compris entre 10 et 39.0
 # AUTOTHROTTLE_ENABLED = True
@@ -34,7 +37,7 @@ DOWNLOADER_MIDDLEWARES = {
 DEBUG = False
 
 #Nombre de redirection successives que l'on peut effectuer.
-REDIRECT_MAX_TIMES = 2
+REDIRECT_MAX_TIMES = 5
 
 DOWNLOAD_TIMEOUT = 40
 
@@ -42,6 +45,7 @@ EXTENSIONS = {
     'scrapy.contrib.corestats.CoreStats': 500,
     'scrapy.contrib.logstats.LogStats': 500,
     'util.statsToDb.statsToDb': 800,
+    'util.proxy_middleware.ProxyMiddleware': 800,
     # 'util.EndMiddleware.VacuumJobdir':900
 }
 

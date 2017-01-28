@@ -14,12 +14,16 @@ class MeilleursagentsSpider(offerSpider):
     name = "meilleursagents"
     start_urls = ['http://www.meilleursagents.com/immobilier/recherche/?redirect_url=&view_mode=&sort_mode=&transaction_type=369681778&buyer_search_id=&user_email=&place_ids[]=138724240&place_title=&item_types[]=369681781&item_types[]=369681782&item_area_min=&item_area_max=&budget_min=&budget_max=']
 
-    # TODO CHANGE
+
+    offer_category_id = OfferCategory.objects.filter(name='location')[0].id
+    source_id = Source.objects.filter(name="meilleursagents")[0].id
+
     def parse_next_page(self, response):
         try:
-            for elmt in response.xpath('.//div[@id="vue"]/div[@data-classified-id]'):
+            for elmt in response.xpath('.//*[@id="body"]/div[@class="container-wide"]/div[contains(@class,"section")]/ul/li[@class="relative"]'):
+                url = elmt.xpath('.//h2/a[@title]/@href').extract()[0]
                 try:
-                    html_id = elmt.xpath('.//*/@data-classified-id').extract()[0]
+                    html_id = int(re.match('.*/annonce-(\d+)/', url).group(1))
                 except:
                     log.warning("No html_id for this element. Skipping it.")
                     continue
@@ -33,16 +37,14 @@ class MeilleursagentsSpider(offerSpider):
                 offer.html_id = html_id
                 offer.source_id = self.source_id
                 offer.offer_category_id = self.offer_category_id
-                offer.url = 'http://www.explorimmo.com' + elmt.xpath('.//h2[@itemprop="name"]/a[@class="js-item-title"]/@href').extract()[0]
-                offer.title = elmt.xpath('.//h2[@itemprop="name"]/a[@class="js-item-title"]/text()').extract()[0].strip()
+                offer.url = "https:" + url
+                offer.title = elmt.xpath('.//h2/a[@title]/@title').extract()[0]
+                offer.area = re.match(u'^.*\s(\d+) m\xb2$',offer.title).group(1)
                 try:
-                    offer.price = elmt.xpath('.//span[@class="price-label"]/text()').extract()[0].strip().replace(u'\xa0','')[:-1]
+                    offer.price = re.match(u'(\d?\s\d+)+', elmt.xpath('.//div[contains(@class,"pull-right")]/div/strong/text()').extract()[0]).replace(' ', '')
                 except:
                     offer.price = None
-
-                arrdssmt = (' '.join(elmt.xpath('.//span[@class="localisation-label"]/strong/text()').extract())).strip()
-                metro = (' '.join(elmt.xpath('.//span[@class="item-localisation"]/text()').extract())).strip()
-                offer.address = arrdssmt + ' ' + metro
+                offer.address = re.match(u'\s*(.*)\s*', elmt.xpath('.//div[@class="media-body"]//div[@class="pull-left"]/h2[a]/following::div[@class="muted ellipsis"]/text()').extract()[0]).group(1)
                 offer.last_crawl_date = datetime.now()
                 offer.save()
                 yield Request(offer.url, callback=self.parse_one_annonce, meta={'offer':offer})
@@ -53,10 +55,10 @@ class MeilleursagentsSpider(offerSpider):
         t = True
 
         try:
-            n = urlparse.parse_qs(parse.query)['page'][0]
+            n = urlparse.parse_qs(parse.query)['p'][0]
         except KeyError:
             t = False
-            next_page = response.url + '&page=2'
+            next_page = response.url + '&p=2'
             yield Request(next_page,
                                 callback=self.parse_next_page)
 
@@ -67,14 +69,10 @@ class MeilleursagentsSpider(offerSpider):
             yield Request(next_page,
                                 callback=self.parse_next_page)
 
-    # TODO CHANGE
     def parse_one_annonce(self, response):
-        offer = super(ExplorimmoSpider, self).parse_one_annonce(response)
-        surface = response.xpath('//li/span[@class="name"][text()="Surface"]/following-sibling::span/text()').extract()
-        descriptionDetaillee = response.xpath('//div[@itemprop="description"]/p[@class="description"]/text()').extract()
-        offer.area = re.compile('(\D+)').sub('', surface[0])
+        offer = super(MeilleursagentsSpider, self).parse_one_annonce(response)
         try:
-            offer.description = descriptionDetaillee[0]
+            offer.description = response.xpath('//div[@class="section"]/h2[contains(.,"Description")]/following::p/text()').extract()[0]
         except:
             log.warning("No description for this item")
             offer.description = ""
